@@ -3,19 +3,21 @@ import '../core/base/util/app_colors.dart';
 import '../core/base/util/icon_utility.dart';
 import '../core/base/util/img_utility.dart';
 import '../core/base/util/text_utility.dart';
+import '../core/base/util/const_texts.dart';
+import 'get_started_view.dart';
 
 const List<Map<String, String>> slideData = [
   {
-    "header": "Soruları yanıtla, yatkınlığını ölçelim",
-    "description": "Yılların getirdiği tecrübemizle hazırladığımız soruları cevapla, genetik açıdan saç kaybına yatkınlığın var mı öğren."
+    "header": ConstTexts.slideOneHeader,
+    "description": ConstTexts.slideOneDesc
   },
   {
-    "header": "Randevu al ve uzman kadromuzla görüş",
-    "description": "Dilersen saçının fotoğraflarını yükle ve randevu oluştur, doktorlarımızla yüzyüze görüşme gerçekleştir."
+    "header": ConstTexts.slideTwoHeader,
+    "description": ConstTexts.slideTwoDesc
   },
   {
-    "header": "Tedavi sürecini\ntek yerden yönet",
-    "description": "Tedavi sürecini, belirli periyodlarla fotoğraflar yükleyerek ve doktorundan dönüş alarak tek yerden yönet!"
+    "header": ConstTexts.slideThreeHeader,
+    "description": ConstTexts.slideThreeDesc
   }
 ];
 
@@ -36,30 +38,50 @@ class _WelcomeViewState extends State<WelcomeView> {
     super.dispose();
   }
 
+  void _goToGetStarted() {
+    if (ModalRoute.of(context)?.isCurrent != true) return;
+
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => const GetStartedView()),
+    ).then((_) {
+      if (mounted) {
+        _pageController.jumpToPage(slideData.length - 1);
+        setState(() {
+          _currentPage = slideData.length - 1;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
       body: Column(
         children: [
-          // 1. FIXED Top Image
           Image.asset(
             ImageUtility.welcomeImg,
             fit: BoxFit.cover,
             width: double.infinity,
           ),
 
-          // 2. SLIDABLE Middle Section
           Expanded(
             child: PageView.builder(
               controller: _pageController,
-              itemCount: slideData.length,
+              itemCount: slideData.length + 1,
               onPageChanged: (index) {
-                setState(() {
-                  _currentPage = index;
-                });
+                if (index == slideData.length) {
+                  _goToGetStarted();
+                } else {
+                  setState(() {
+                    _currentPage = index;
+                  });
+                }
               },
               itemBuilder: (context, index) {
+                if (index == slideData.length) {
+                  return Container(color: AppColors.white);
+                }
                 final slide = slideData[index];
                 return _SlideContent(
                   header: slide['header']!,
@@ -69,7 +91,6 @@ class _WelcomeViewState extends State<WelcomeView> {
             ),
           ),
 
-          // 3. FIXED Bottom Navigation Bar
           _BottomNavBar(
             currentPage: _currentPage,
             pageCount: slideData.length,
@@ -88,8 +109,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                   curve: Curves.easeOut,
                 );
               } else {
-                // On last page, go to Home or Login
-                // print("Go to Login Screen");
+                _goToGetStarted();
               }
             },
           ),
@@ -122,7 +142,7 @@ class _SlideContent extends StatelessWidget {
           Text(
             description,
             style: TextUtility.getStyle(
-              fontSize: 18.0,
+              fontSize: 16.0, // 16px
               color: AppColors.dark,
             ),
           ),
@@ -149,6 +169,7 @@ class _BottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isFirstPage = currentPage == 0;
+    final bool isLastPage = currentPage == pageCount - 1;
 
     return Container(
       height: 70 + MediaQuery.of(context).padding.bottom,
@@ -165,13 +186,14 @@ class _BottomNavBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // Left Arrow
-          Opacity(
+          AnimatedOpacity(
             opacity: isFirstPage ? 0.0 : 1.0,
+            duration: const Duration(milliseconds: 300),
             child: IconButton(
               onPressed: isFirstPage ? null : onLeftTap,
               icon: const Icon(
                 AppIcons.arrowLeft,
-                color: AppColors.lighter,
+                color: AppColors.light,
               ),
             ),
           ),
@@ -186,9 +208,19 @@ class _BottomNavBar extends StatelessWidget {
           // Right Arrow
           IconButton(
             onPressed: onRightTap,
-            icon: const Icon(
-              AppIcons.arrowRight,
-              color: AppColors.lighter,
+            icon: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              transitionBuilder: (child, animation) {
+                return ScaleTransition(
+                  scale: animation,
+                  child: FadeTransition(opacity: animation, child: child),
+                );
+              },
+              child: Icon(
+                isLastPage ? Icons.check_rounded : AppIcons.arrowRight,
+                key: ValueKey<bool>(isLastPage),
+                color: AppColors.light,
+              ),
             ),
           ),
         ],
@@ -205,11 +237,12 @@ class _PageIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOutCubic,
       margin: const EdgeInsets.symmetric(horizontal: 4),
       height: 10,
-      width: 10,
+      width: isActive ? 24.0 : 10.0,
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
+        borderRadius: BorderRadius.circular(20),
         color: isActive ? AppColors.lighter : AppColors.light,
       ),
     );
