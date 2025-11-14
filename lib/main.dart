@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'views/welcome_view.dart'; // Import the new WelcomeView
 
 void main() {
-  runApp(const MainApp());
+  runApp(const MyApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
+    return MaterialApp(
+      title: 'Hairtech App',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
       ),
+      debugShowCheckedModeBanner: false, // Hides the debug banner
+      home: const WelcomeView(), // Set WelcomeView as the starting screen
     );
   }
 }
