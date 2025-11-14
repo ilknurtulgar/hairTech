@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'views/welcome_view.dart'; // Import the new WelcomeView
+import 'core/base/util/size_config.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,6 +11,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig.init(context);
     return MaterialApp(
       title: 'Hairtech App',
       theme: ThemeData(

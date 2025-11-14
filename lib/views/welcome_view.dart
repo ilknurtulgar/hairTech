@@ -4,6 +4,8 @@ import '../core/base/util/icon_utility.dart';
 import '../core/base/util/img_utility.dart';
 import '../core/base/util/text_utility.dart';
 import '../core/base/util/const_texts.dart';
+import '../core/base/util/size_config.dart';
+import '../core/base/util/padding_util.dart';
 import 'get_started_view.dart';
 
 const List<Map<String, String>> slideData = [
@@ -55,6 +57,7 @@ class _WelcomeViewState extends State<WelcomeView> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig.init(context);
     return Scaffold(
       backgroundColor: AppColors.white,
       body: Column(
@@ -129,7 +132,7 @@ class _SlideContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(32.0),
+      padding: ResponsePadding.adPage(),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -172,7 +175,7 @@ class _BottomNavBar extends StatelessWidget {
     final bool isLastPage = currentPage == pageCount - 1;
 
     return Container(
-      height: 70 + MediaQuery.of(context).padding.bottom,
+      height: SizeConfig.responsiveHeight(70 + MediaQuery.of(context).padding.bottom),
       decoration: const BoxDecoration(
         color: AppColors.darker,
         borderRadius: BorderRadius.only(
@@ -239,8 +242,8 @@ class _PageIndicator extends StatelessWidget {
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOutCubic,
       margin: const EdgeInsets.symmetric(horizontal: 4),
-      height: 10,
-      width: isActive ? 24.0 : 10.0,
+      height: SizeConfig.responsiveHeight(10),
+      width: isActive ? SizeConfig.responsiveWidth(24.0) : SizeConfig.responsiveWidth(10.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         color: isActive ? AppColors.lighter : AppColors.light,

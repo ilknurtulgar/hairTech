@@ -5,7 +5,8 @@ import '../util/text_utility.dart';
 class Button extends StatelessWidget {
   final String text;
   final VoidCallback onTap;
-  final double width;
+  final double buttonWidth;
+  final double buttonHeight;
   final Color backgroundColor;
   final Color textColor;
   final bool isOutline;
@@ -14,7 +15,8 @@ class Button extends StatelessWidget {
     super.key,
     required this.text,
     required this.onTap,
-    this.width = double.infinity,
+    this.buttonWidth = double.infinity,
+    this.buttonHeight = 56,
     this.backgroundColor = AppColors.dark,
     this.textColor = AppColors.light,
     this.isOutline = false,
@@ -41,8 +43,8 @@ class Button extends StatelessWidget {
     }
 
     return SizedBox(
-      width: width,
-      height: 56,
+      width: buttonWidth,
+      height: buttonHeight,
       child: ElevatedButton(
         onPressed: onTap,
         style: ElevatedButton.styleFrom(
