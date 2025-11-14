@@ -36,4 +36,13 @@ class TextUtility {
     );
   }
 
+  static TextStyle get bigHeaderStyle {
+    return getStyle(
+      fontSize: 40.0,
+      fontWeight: FontWeight.w900,
+      fontStyle: FontStyle.italic,
+      color: AppColors.black,
+    );
+  }
+
 }
