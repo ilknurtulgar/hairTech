@@ -1,32 +1,40 @@
 import 'package:flutter/material.dart';
+import '../util/const_texts.dart';
 import '../util/size_config.dart';
 import '../util/text_utility.dart';
 
-class EvaluationData {
-  final String label;
-  final String value;
-  final Color color;
-  final double fontSize;
-
-  const EvaluationData({
-    required this.label,
-    required this.value,
-    required this.color,
-    required this.fontSize,
-  });
-}
-
 class EvaluationItem extends StatelessWidget {
-  final List<EvaluationData> evaluations;
+  final String growthValue;
+  final String densityValue;
+  final String naturalnessValue;
+  final String healthValue;
+  final String overallValue;
+  final Color valueColor;
+  final double valueFontSize;
 
   const EvaluationItem({
     Key? key,
-    required this.evaluations,
-  }) : assert(evaluations.length == 5, 'EvaluationItem must have exactly 5 items'),
-       super(key: key);
+    required this.growthValue,
+    required this.densityValue,
+    required this.naturalnessValue,
+    required this.healthValue,
+    required this.overallValue,
+    required this.valueColor,
+    required this.valueFontSize,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final labels = [
+      EvaluationTexts.evaluationGrowthLabel,
+      EvaluationTexts.evaluationDensityLabel,
+      EvaluationTexts.evaluationNaturalnessLabel,
+      EvaluationTexts.evaluationHealthLabel,
+      EvaluationTexts.evaluationOverallLabel,
+    ];
+    
+    final values = [growthValue, densityValue, naturalnessValue, healthValue, overallValue];
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: List.generate(
@@ -35,22 +43,22 @@ class EvaluationItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              evaluations[index].value,
+              values[index],
               style: TextUtility.getStyle(
-                fontSize: evaluations[index].fontSize,
+                fontSize: valueFontSize,
                 fontWeight: FontWeight.w800,
                 fontStyle: FontStyle.italic,
-                color: evaluations[index].color,
+                color: valueColor,
               ),
             ),
             SizedBox(height: SizeConfig.responsiveHeight(2)),
             Text(
-              evaluations[index].label,
+              labels[index],
               style: TextUtility.getStyle(
                 fontSize: SizeConfig.responsiveWidth(10),
-                fontWeight: FontWeight.w400,
+                fontWeight: FontWeight.w200,
                 fontStyle: FontStyle.italic,
-                color: evaluations[index].color,
+                color: valueColor,
               ),
             ),
           ],
