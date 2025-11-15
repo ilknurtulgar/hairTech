@@ -32,6 +32,7 @@ class ConstTexts {
   static const String progressTabLabel = 'Sürecim';
 
   static const String activeAppointmentLabel = 'Aktif Randevu';
+  static const String reviewAnswersButtonText = 'Yanıtları İncele';
 }
 
 class EvaluationTexts {
