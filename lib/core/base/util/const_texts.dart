@@ -17,4 +17,8 @@ class ConstTexts {
   static const String startTestButtonText = "Ön Değerlendirme";
   static const String registeredPatientLoginButtonText = "Kayıtlı Hasta Girişi";
   static const String doctorLoginButtonText = "Hekim Girişi";
+
+  static const String analysisResultLabel = 'Analiz Sonucu: ';
+  static const String ageLabel = 'Yaş: ';
+  static const String stageLabel = 'Aşama: ';
 }

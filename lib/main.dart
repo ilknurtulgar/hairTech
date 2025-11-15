@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hairtech/core/base/util/app_colors.dart';
 import 'core/base/components/person_info_container.dart';
 import 'core/base/components/result_information_container.dart';
+import 'core/base/components/patient_information_container.dart';
 import 'core/base/util/size_config.dart';
 
 void main() {
@@ -15,7 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Hairtech App',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.background),
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false, // Hides the debug banner
@@ -35,14 +37,20 @@ class PersonInfoContainerTestView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('PersonInfoContainer Test'),
       ),
-      body:const SingleChildScrollView(
+      body: const SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child:   // 4. ResultInformationContainer - Uzun text örneği
-              const ResultInformationContainer(
-                text:
-                    "Randevunuz başarıyla oluşturuldu. Tarih: 15 Kasım 2025, Saat: 14:30. Berber: Mehmet De Lütfen randevu saatinden 10 dakika önce hazır olunuz",
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              
+              // PatientInformationContainer
+              PatientInformationContainer(
+                analysisResult: 'Norwood 4',
+                age: '35',
+                stage: '6. ay',
               ),
+            ],
+          ),
         ),
       ),
     );
