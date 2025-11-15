@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   get: ^4.7.2
+  fl_chart: ^0.69.0
 
 dev_dependencies:
   flutter_test:
