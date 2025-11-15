@@ -4,6 +4,7 @@ import 'package:hairtech/core/base/components/patient_process_container.dart';
 import 'package:hairtech/core/base/util/app_colors.dart';
 import 'package:hairtech/core/base/util/size_config.dart';
 
+
 void main() {
   runApp(const MyApp());
 }
@@ -13,6 +14,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig.init(context);
     return MaterialApp(
       title: 'Hairtech App',
       theme: ThemeData(

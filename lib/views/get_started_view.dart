@@ -5,6 +5,7 @@ import '../core/base/util/icon_utility.dart';
 import '../core/base/util/img_utility.dart';
 import '../core/base/util/text_utility.dart';
 import '../core/base/util/const_texts.dart';
+import '../core/base/util/size_config.dart';
 import 'patient_login_view.dart';
 import 'doctor_login_view.dart';
 
@@ -13,6 +14,7 @@ class GetStartedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig.init(context);
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
@@ -40,40 +42,49 @@ class GetStartedView extends StatelessWidget {
                 style: TextUtility.headerStyle,
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 32),
-              Button(
-                text: ConstTexts.startTestButtonText,
-                onTap: () {
-                  // print("Ön Değerlendirme");
-                },
-                backgroundColor: AppColors.secondary, // Orange
-                textColor: AppColors.white,
+              const SizedBox(height: 16),
+              Center (
+                child: Button(
+                  text: ConstTexts.startTestButtonText,
+                  onTap: () {
+                    // print("Ön Değerlendirme");
+                  },
+                  backgroundColor: AppColors.secondary, // Orange
+                  textColor: AppColors.white,
+                  buttonHeight: SizeConfig.responsiveHeight(80),
+                ),
               ),
               const SizedBox(height: 16),
-              Button(
-                text: ConstTexts.registeredPatientLoginButtonText,
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const PatientLoginView(),
-                    ),
-                  );
-                },
-                backgroundColor: AppColors.primary,
-                textColor: AppColors.white,
+              Center (
+                child: Button(
+                  text: ConstTexts.registeredPatientLoginButtonText,
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const PatientLoginView(),
+                      ),
+                    );
+                  },
+                  backgroundColor: AppColors.primary,
+                  textColor: AppColors.white,
+                  buttonHeight: SizeConfig.responsiveHeight(80),
+                ),
               ),
               const SizedBox(height: 16),
-              Button(
-                text: ConstTexts.doctorLoginButtonText,
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const DoctorLoginView(),
-                    ),
-                  );
-                },
-                isOutline: true,
-                textColor: AppColors.dark,
+              Center (
+                child: Button(
+                  text: ConstTexts.doctorLoginButtonText,
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const DoctorLoginView(),
+                      ),
+                    );
+                  },
+                  isOutline: true,
+                  textColor: AppColors.dark,
+                  buttonHeight: SizeConfig.responsiveHeight(80),
+                ),
               ),
             ],
           ),
