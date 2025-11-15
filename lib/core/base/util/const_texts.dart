@@ -24,4 +24,10 @@ class ConstTexts {
 
   static const String yesText = 'Evet';
   static const String noText = 'Hayır';
+
+  static const String homeTabLabel = 'Ana Sayfa';
+  static const String cameraTabLabel = 'Fotoğraf Çek';
+  static const String appointmentsTabLabel = 'Randevularım';
+  static const String patientsTabLabel = 'Hastalarım';
+  static const String progressTabLabel = 'Sürecim';
 }
