@@ -31,7 +31,6 @@ class PatientInformationContainer extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Analiz Sonucu
           Row(
             children: [
               Text(
@@ -59,7 +58,6 @@ class PatientInformationContainer extends StatelessWidget {
             ],
           ),
           
-          // Yaş
           Row(
             children: [
               Text(
@@ -83,7 +81,6 @@ class PatientInformationContainer extends StatelessWidget {
             ],
           ),
 
-          // Aşama
           Row(
             children: [
               Text(
