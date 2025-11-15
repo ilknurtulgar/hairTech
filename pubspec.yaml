@@ -1,0 +1,35 @@
+name: hairtech
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.4.3 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.otf
+          weight: 400
+        - asset: assets/fonts/Inter-BoldItalic.otf
+          weight: 700
+          style: italic
+        - asset: assets/fonts/Inter-ExtraBoldItalic.otf
+          weight: 800
+          style: italic
+        - asset: assets/fonts/Inter-BlackItalic.otf
+          weight: 900
+          style: italic
