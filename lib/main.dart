@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hairtech/core/base/components/new_scheduled_appointments.dart';
+import 'package:hairtech/core/base/components/evaluation_bar.dart';
 import 'package:hairtech/core/base/util/app_colors.dart';
 import 'package:hairtech/core/base/util/size_config.dart';
 
@@ -21,13 +21,13 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: const NewScheduledAppointmentsTestView(),
+      home: const EvaluationBarTestView(),
     );
   }
 }
 
-class NewScheduledAppointmentsTestView extends StatelessWidget {
-  const NewScheduledAppointmentsTestView({Key? key}) : super(key: key);
+class EvaluationBarTestView extends StatelessWidget {
+  const EvaluationBarTestView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -36,43 +36,59 @@ class NewScheduledAppointmentsTestView extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('New Scheduled Appointments Test'),
+        title: const Text('Evaluation Bar Test'),
         backgroundColor: AppColors.dark,
         foregroundColor: AppColors.white,
       ),
       body: Center(
         child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: 20),
-              NewScheduledAppointments(
-                date: '15 Kasım 2025',
-                day: 'Cuma',
-                time: '14:30',
-                patientImageUrls: const [null, null, null, null, null],
-                patientName: 'Ahmet',
-                patientSurname: 'Yılmaz',
-                patientAge: '35',
-                onReviewAnswers: () {
-                  print('Yanıtları İncele tapped');
-                },
-              ),
-              const SizedBox(height: 20),
-              NewScheduledAppointments(
-                date: '20 Aralık 2025',
-                day: 'Cumartesi',
-                time: '10:00',
-                patientImageUrls: const [null, null, null, null, null],
-                patientName: 'Ayşe',
-                patientSurname: 'Demir',
-                patientAge: '28',
-                onReviewAnswers: () {
-                  print('Yanıtları İncele tapped');
-                },
-              ),
-              const SizedBox(height: 20),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(height: 20),
+                EvaluationBar(
+                  title: 'Uzama',
+                
+                  onValueChanged: (value) {
+                    print('Uzama: $value');
+                  },
+                ),
+                const SizedBox(height: 30),
+                EvaluationBar(
+                  title: 'Yoğunluk',
+                   onValueChanged: (value) {
+                    print('Yoğunluk: $value');
+                  },
+                ),
+                const SizedBox(height: 30),
+                EvaluationBar(
+                  title: 'Doğallık',
+               
+                  onValueChanged: (value) {
+                    print('Doğallık: $value');
+                  },
+                ),
+                const SizedBox(height: 30),
+                EvaluationBar(
+                  title: 'Sağlık',
+               
+                  onValueChanged: (value) {
+                    print('Sağlık: $value');
+                  },
+                ),
+                const SizedBox(height: 30),
+                EvaluationBar(
+                  title: 'Genel',
+                 
+                  onValueChanged: (value) {
+                    print('Genel: $value');
+                  },
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),
