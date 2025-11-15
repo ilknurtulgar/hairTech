@@ -5,7 +5,7 @@ class ResponsePadding {
 
   /// Genel sayfa padding (sayfalar ortalanmış)
   static EdgeInsets page() {
-    return EdgeInsets.all(SizeConfig.responsiveWidth(16));
+    return EdgeInsets.all(SizeConfig.responsiveWidth(15));
   }
 
   /// Reklam sayfası padding (top 50)
@@ -68,4 +68,9 @@ class ResponsePadding {
   static EdgeInsets pageTitle() {
     return EdgeInsets.all(SizeConfig.responsiveWidth(15));
   }
+
+  static EdgeInsets buttonSpacing() {
+    return EdgeInsets.symmetric(horizontal: SizeConfig.responsiveWidth(2));
+  }
+  
 }
