@@ -21,4 +21,7 @@ class ConstTexts {
   static const String analysisResultLabel = 'Analiz Sonucu: ';
   static const String ageLabel = 'Yaş: ';
   static const String stageLabel = 'Aşama: ';
+
+  static const String yesText = 'Evet';
+  static const String noText = 'Hayır';
 }
