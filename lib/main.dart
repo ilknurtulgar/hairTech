@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hairtech/core/base/components/evaluation_item.dart';
-import 'package:hairtech/core/base/components/patient_process_container.dart';
+import 'package:hairtech/core/base/components/evaluation_item_container.dart';
 import 'package:hairtech/core/base/util/app_colors.dart';
 import 'package:hairtech/core/base/util/size_config.dart';
 
@@ -20,13 +19,13 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: const EvaluationTestView(),
+      home: const EvaluationItemContainerTestView(),
     );
   }
 }
 
-class EvaluationTestView extends StatelessWidget {
-  const EvaluationTestView({Key? key}) : super(key: key);
+class EvaluationItemContainerTestView extends StatelessWidget {
+  const EvaluationItemContainerTestView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +34,7 @@ class EvaluationTestView extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Evaluation & Patient Process Test'),
+        title: const Text('Evaluation Item Container Test'),
         backgroundColor: AppColors.dark,
         foregroundColor: AppColors.white,
       ),
@@ -44,7 +43,7 @@ class EvaluationTestView extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-            
+             
             ],
           ),
         ),
