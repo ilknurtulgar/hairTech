@@ -17,4 +17,17 @@ class ConstTexts {
   static const String startTestButtonText = "Ön Değerlendirme";
   static const String registeredPatientLoginButtonText = "Kayıtlı Hasta Girişi";
   static const String doctorLoginButtonText = "Hekim Girişi";
+
+  static const String analysisResultLabel = 'Analiz Sonucu: ';
+  static const String ageLabel = 'Yaş: ';
+  static const String stageLabel = 'Aşama: ';
+
+  static const String yesText = 'Evet';
+  static const String noText = 'Hayır';
+
+  static const String homeTabLabel = 'Ana Sayfa';
+  static const String cameraTabLabel = 'Fotoğraf Çek';
+  static const String appointmentsTabLabel = 'Randevularım';
+  static const String patientsTabLabel = 'Hastalarım';
+  static const String progressTabLabel = 'Sürecim';
 }

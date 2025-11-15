@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'views/welcome_view.dart'; // Import the new WelcomeView
+import 'package:hairtech/core/base/util/app_colors.dart';
 import 'core/base/util/size_config.dart';
 
 void main() {
@@ -15,11 +15,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Hairtech App',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.background),
         useMaterial3: true,
       ),
-      debugShowCheckedModeBanner: false, // Hides the debug banner
-      home: const WelcomeView(), // Set WelcomeView as the starting screen
+      debugShowCheckedModeBanner: false,
+      home:  Column()//const BottomTabBarTestView(),
     );
   }
 }
+

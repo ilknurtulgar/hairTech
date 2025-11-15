@@ -5,7 +5,7 @@ class ResponsePadding {
 
   /// Genel sayfa padding (sayfalar ortalanmış)
   static EdgeInsets page() {
-    return EdgeInsets.all(SizeConfig.responsiveWidth(16));
+    return EdgeInsets.all(SizeConfig.responsiveWidth(15));
   }
 
   /// Reklam sayfası padding (top 50, left and rigth 16)
@@ -40,6 +40,10 @@ class ResponsePadding {
   static EdgeInsets generalContainer() {
     return EdgeInsets.all(SizeConfig.responsiveWidth(10));
   }
+   /// Genel containerlar large arası boşluk
+  static EdgeInsets generalContainerLarge() {
+    return EdgeInsets.all(SizeConfig.responsiveWidth(20));
+  }
 
   /// Küçük resim kaydırmalı görseller arası
   static EdgeInsets smallImageScroll() {
@@ -70,4 +74,9 @@ class ResponsePadding {
   static EdgeInsets pageTitle() {
     return EdgeInsets.all(SizeConfig.responsiveWidth(15));
   }
+
+  static EdgeInsets buttonSpacing() {
+    return EdgeInsets.symmetric(horizontal: SizeConfig.responsiveWidth(2));
+  }
+  
 }
