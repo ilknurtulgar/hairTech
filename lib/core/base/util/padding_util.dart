@@ -38,6 +38,10 @@ class ResponsePadding {
   static EdgeInsets generalContainer() {
     return EdgeInsets.all(SizeConfig.responsiveWidth(10));
   }
+   /// Genel containerlar large arası boşluk
+  static EdgeInsets generalContainerLarge() {
+    return EdgeInsets.all(SizeConfig.responsiveWidth(20));
+  }
 
   /// Küçük resim kaydırmalı görseller arası
   static EdgeInsets smallImageScroll() {
