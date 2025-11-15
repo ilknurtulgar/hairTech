@@ -30,4 +30,17 @@ class ConstTexts {
   static const String appointmentsTabLabel = 'Randevularım';
   static const String patientsTabLabel = 'Hastalarım';
   static const String progressTabLabel = 'Sürecim';
+
+  static const String activeAppointmentLabel = 'Aktif Randevu';
+}
+
+class EvaluationTexts {
+  
+  EvaluationTexts._();
+  static const String evaluationGrowthLabel = 'Uzama';
+  static const String evaluationDensityLabel = 'Yoğunluk';
+  static const String evaluationNaturalnessLabel = 'Doğallık';
+  static const String evaluationHealthLabel = 'Sağlık';
+  static const String evaluationOverallLabel = 'Genel';
+
 }

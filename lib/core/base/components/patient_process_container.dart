@@ -17,7 +17,11 @@ class PatientProcessContainer extends StatelessWidget {
   final VoidCallback? onTap;
   final String? doctorFeedbackTitle;
   final String? doctorFeedback;
-  final List<EvaluationData>? evaluations;
+  final String? growthValue;
+  final String? densityValue;
+  final String? naturalnessValue;
+  final String? healthValue;
+  final String? overallValue;
 
   const PatientProcessContainer({
     Key? key,
@@ -29,7 +33,11 @@ class PatientProcessContainer extends StatelessWidget {
     this.onTap,
     this.doctorFeedbackTitle,
     this.doctorFeedback,
-    this.evaluations,
+    this.growthValue,
+    this.densityValue,
+    this.naturalnessValue,
+    this.healthValue,
+    this.overallValue,
   }) : super(key: key);
 
   @override
@@ -125,9 +133,17 @@ class PatientProcessContainer extends StatelessWidget {
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
               ),
-              if (evaluations != null && evaluations!.length == 5) ...[
+              if (growthValue != null && densityValue != null && naturalnessValue != null && healthValue != null && overallValue != null) ...[
                 SizedBox(height: SizeConfig.responsiveHeight(10)),
-                EvaluationItem(evaluations: evaluations!),
+                EvaluationItem(
+                  growthValue: growthValue!,
+                  densityValue: densityValue!,
+                  naturalnessValue: naturalnessValue!,
+                  healthValue: healthValue!,
+                  overallValue: overallValue!,
+                  valueColor: AppColors.darker,
+                  valueFontSize: SizeConfig.responsiveWidth(14),
+                ),
               ],
             ],
           ],
