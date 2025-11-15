@@ -20,7 +20,7 @@ class TextUtility {
 
   static TextStyle get subheaderStyle {
     return getStyle(
-      fontSize: 16.0,
+      fontSize: 18.0,
       fontWeight: FontWeight.w800,
       fontStyle: FontStyle.italic,
       color: AppColors.black,
