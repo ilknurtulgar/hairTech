@@ -8,6 +8,8 @@ class ConstTexts {
   static const String slideTwoDesc = "Dilersen saçının fotoğraflarını yükle ve randevu oluştur, doktorlarımızla yüzyüze görüşme gerçekleştir.";
   static const String slideThreeDesc = "Tedavi sürecini, belirli periyodlarla fotoğraflar yükleyerek ve doktorundan dönüş alarak tek yerden yönet!";
 
+  static const String getStartedHeader = "Hazırsan,\nbaşlayalım!";
+
   static const String emailHint = "E-MAIL";
   static const String passwordHint = "ŞİFRE";
   static const String nameHint = "İsim";

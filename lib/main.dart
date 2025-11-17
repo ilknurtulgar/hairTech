@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:hairtech/core/base/providers/patient_home_provider.dart';
-import 'package:hairtech/core/base/providers/user_provider.dart';
-import 'package:hairtech/core/base/service/auth_service.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import 'package:hairtech/views/auth_wrapper.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'core/base/util/app_bindings.dart';
 
 Future<void> main() async {
-  // 1. Ensure Flutter is ready
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // 2. Initialize Firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await initializeDateFormatting('tr_TR', null);
 
-  // 3. Run the app
+  // 4. Run the App
   runApp(const MyApp());
 }
 
@@ -25,27 +23,35 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 4. Provide all your services/providers to the entire app
-    return MultiProvider(
-      providers: [
-        // Services (plain classes)
-        Provider<AuthService>(create: (context) => AuthService()),
-        
-        // State Notifiers (ChangeNotifier)
-        ChangeNotifierProvider(create: (context) => UserProvider()),
-        ChangeNotifierProvider(create: (context) => PatientHomeProvider()),
-      ],
-      child: MaterialApp(
-        title: 'Hairtech',
-        theme: ThemeData(
-          useMaterial3: true,
-          fontFamily: 'Inter', // Sets the default font for the whole app
-        ),
-        debugShowCheckedModeBanner: false,
-        
-        // 5. AuthWrapper handles all auth state and SizeConfig initialization
-        home: const AuthWrapper(),
+    // 5. REMOVED MultiProvider
+    // 6. CHANGED to GetMaterialApp
+    return GetMaterialApp(
+      title: 'Hairtech',
+      theme: ThemeData(
+        useMaterial3: true,
+        fontFamily: 'Inter',
       ),
+      debugShowCheckedModeBanner: false,
+
+      // 7. Add Localization
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('tr', 'TR'),
+      ],
+      locale: const Locale('tr', 'TR'),
+
+      // 8. Add initial bindings
+      // This tells GetX to run your AppBindings class
+      // as soon as the app starts, loading all your controllers.
+      initialBinding: AppBindings(),
+
+      // 9. AuthWrapper is now the home page.
+      // It will be simpler.
+      home: const AuthWrapper(),
     );
   }
 }

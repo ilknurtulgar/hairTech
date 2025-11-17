@@ -1,95 +1,68 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../core/base/components/button.dart';
 import '../core/base/components/input_box.dart';
-import '../core/base/service/auth_service.dart';
 import '../core/base/util/app_colors.dart';
 import '../core/base/util/const_texts.dart';
 import '../core/base/util/icon_utility.dart';
-import '../core/base/util/img_utility.dart';
 import '../core/base/util/text_utility.dart';
-//import 'package:hairtech/views/main_navigation_view.dart'; // <-- Import this
+import '../core/base/service/auth_service.dart';
 
-class PatientSignUpView extends StatefulWidget {
+class PatientSignUpView extends StatelessWidget {
   const PatientSignUpView({super.key});
 
   @override
-  State<PatientSignUpView> createState() => _PatientSignUpViewState();
-}
-
-class _PatientSignUpViewState extends State<PatientSignUpView> {
-  final AuthService _authService = AuthService();
-  final _nameController = TextEditingController();
-  final _surnameController = TextEditingController(); // <-- Added
-  final _ageController = TextEditingController(); // <-- Added
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _isLoading = false;
-  String? _errorMessage;
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _surnameController.dispose(); // <-- Added
-    _ageController.dispose(); // <-- Added
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  void _handleSignUp() async {
-    FocusScope.of(context).unfocus();
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
-
-    final name = _nameController.text.trim();
-    final surname = _surnameController.text.trim(); // <-- Added
-    final age = int.tryParse(_ageController.text.trim()); // <-- Added
-    final email = _emailController.text.trim();
-    final password = _passwordController.text.trim();
-    if (name.isEmpty ||
-        surname.isEmpty || // <-- Added
-        age == null || // <-- Added
-        email.isEmpty ||
-        password.isEmpty) {
-      setState(() {
-        _errorMessage = "Tüm alanlar doldurulmalıdır";
-        _isLoading = false;
-      });
-      return;
-    }
-
-    final result = await _authService.signUpWithEmailPassword(
-      email: email,
-      password: password,
-      name: name,
-      surname: surname, // <-- Added
-      age: age, // <-- Added
-      isDoctor: false, // <-- Changed
-    );
-
-    if (!mounted) return;
-
-    if (result is User) {
-      // Success
-      // --- UPDATED NAVIGATION ---
-      // Pop all screens until we're back at the AuthWrapper
-      if (mounted) {
-        Navigator.of(context).popUntil((route) => route.isFirst);
-      }
-    } else if (result is String) {
-      // Failure
-      setState(() {
-        _isLoading = false;
-        _errorMessage = result;
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final AuthService authService = Get.find<AuthService>();
+    final nameController = TextEditingController();
+    final surnameController = TextEditingController();
+    final ageController = TextEditingController();
+    final emailController = TextEditingController();
+    final passwordController = TextEditingController();
+    final isLoading = false.obs;
+    final errorMessage = Rx<String?>(null);
+
+    void handleSignUp() async {
+      FocusScope.of(context).unfocus();
+      isLoading.value = true;
+      errorMessage.value = null;
+
+      final name = nameController.text.trim();
+      final surname = surnameController.text.trim();
+      final age = int.tryParse(ageController.text.trim());
+      final email = emailController.text.trim();
+      final password = passwordController.text.trim();
+
+      if (name.isEmpty ||
+          surname.isEmpty ||
+          age == null ||
+          email.isEmpty ||
+          password.isEmpty) {
+        errorMessage.value = "Lütfen tüm alanları doldurun.";
+        isLoading.value = false;
+        return;
+      }
+
+      final result = await authService.signUpWithEmailPassword(
+        email: email,
+        password: password,
+        name: name,
+        surname: surname,
+        age: age,
+        isDoctor: false,
+      );
+
+      if (result is User) {
+        // Success! AuthController will handle the redirect.
+        print("Signup Success! User ID: ${result.uid}");
+        isLoading.value = false;
+      } else if (result is String) {
+        errorMessage.value = result;
+        isLoading.value = false;
+      }
+    }
+
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
@@ -97,7 +70,7 @@ class _PatientSignUpViewState extends State<PatientSignUpView> {
         backgroundColor: AppColors.white,
         leading: IconButton(
           icon: const Icon(AppIcons.arrowLeft, color: AppColors.dark),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Get.back(),
         ),
       ),
       body: Center(
@@ -105,12 +78,8 @@ class _PatientSignUpViewState extends State<PatientSignUpView> {
           padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Image.asset(
-                ImageUtility.logoDark,
-                height: 150,
-              ),
-              const SizedBox(height: 32),
               Text(
                 ConstTexts.patientSignUpHeader,
                 style: TextUtility.headerStyle,
@@ -118,53 +87,56 @@ class _PatientSignUpViewState extends State<PatientSignUpView> {
               ),
               const SizedBox(height: 24),
               InputBox(
-                controller: _nameController,
-                placeholderText: ConstTexts.nameHint, // "İSİM"
+                controller: nameController,
+                placeholderText: ConstTexts.nameHint,
               ),
               const SizedBox(height: 16),
               InputBox(
-                controller: _surnameController, // <-- Added
-                placeholderText: ConstTexts.surnameHint, // "SOYİSİM"
+                controller: surnameController,
+                placeholderText: ConstTexts.surnameHint,
               ),
               const SizedBox(height: 16),
               InputBox(
-                controller: _ageController, // <-- Added
-                placeholderText: ConstTexts.ageHint, // "YAŞ"
-                keyboardType: TextInputType.number, // <-- Set keyboard
+                controller: ageController,
+                placeholderText: ConstTexts.ageHint,
+                keyboardType: TextInputType.number,
               ),
               const SizedBox(height: 16),
               InputBox(
-                controller: _emailController,
+                controller: emailController,
                 placeholderText: ConstTexts.emailHint,
                 keyboardType: TextInputType.emailAddress,
               ),
               const SizedBox(height: 16),
               InputBox(
-                controller: _passwordController,
+                controller: passwordController,
                 placeholderText: ConstTexts.passwordHint,
                 obscureText: true,
               ),
               const SizedBox(height: 24),
-              Button(
-                text: ConstTexts.signUpButton,
-                onTap: _handleSignUp,
-                isLoading: _isLoading,
-                backgroundColor: AppColors.green,
-                textColor: AppColors.white,
-              ),
-              if (_errorMessage != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 16),
-                  child: Text(
-                    _errorMessage!,
-                    style: TextUtility.getStyle(
-                      color: AppColors.secondary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              const SizedBox(height: 24),
+              Obx(() => Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      if (errorMessage.value != null)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: Text(
+                            errorMessage.value!,
+                            style: TextUtility.getStyle(
+                                color: AppColors.secondary,
+                                fontWeight: FontWeight.w600),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      Button(
+                        text: ConstTexts.signUpButton,
+                        onTap: handleSignUp,
+                        isLoading: isLoading.value,
+                        backgroundColor: AppColors.green,
+                        textColor: AppColors.white,
+                      ),
+                    ],
+                  )),
             ],
           ),
         ),
