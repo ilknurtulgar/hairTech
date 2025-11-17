@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hairtech/views/fullscreen_image_view.dart';
 import '../util/app_colors.dart';
 import '../util/padding_util.dart';
 import '../util/size_config.dart';
 import '../util/text_utility.dart';
 import 'evaluation_item.dart';
 import 'image_container.dart';
-import '../../../views/fullscreen_image_view.dart';
 
 enum ProcessContainerType { patient, doctor }
 
@@ -56,7 +57,7 @@ class PatientProcessContainer extends StatelessWidget {
           color: AppColors.lightgray,
           borderRadius: BorderRadius.circular(20),
         ),
-        padding: ResponsePadding.generalContainerLarge(),
+        padding: ResponsePadding.page(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -83,16 +84,11 @@ class PatientProcessContainer extends StatelessWidget {
                     ),
                     child: GestureDetector(
                       onTap: () {
-                        // If the URL is valid, open the full-screen view
                         if (imageUrls[index] != null &&
                             imageUrls[index]!.isNotEmpty) {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => FullScreenImageView(
+                          Get.to(() => FullScreenImageView(
                                 imageUrl: imageUrls[index]!,
-                              ),
-                            ),
-                          );
+                              ));
                         }
                       },
                       child: ImageContainer(

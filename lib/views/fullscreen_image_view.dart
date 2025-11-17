@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hairtech/core/base/util/app_colors.dart';
 import 'package:hairtech/core/base/util/icon_utility.dart';
 
@@ -16,7 +17,7 @@ class FullScreenImageView extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(AppIcons.arrowLeft, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Get.back(),
         ),
       ),
       body: Center(
@@ -27,7 +28,6 @@ class FullScreenImageView extends StatelessWidget {
           child: Image.network(
             imageUrl,
             fit: BoxFit.contain,
-            // Show a loading spinner while the full-res image downloads
             loadingBuilder: (BuildContext context, Widget child,
                 ImageChunkEvent? loadingProgress) {
               if (loadingProgress == null) {
@@ -39,7 +39,6 @@ class FullScreenImageView extends StatelessWidget {
                 ),
               );
             },
-            // Show an error icon if the URL fails to load
             errorBuilder: (BuildContext context, Object error,
                 StackTrace? stackTrace) {
               print("Error loading full-screen image: $error");

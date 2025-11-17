@@ -27,7 +27,7 @@ class CustomBottomTabBar extends StatelessWidget {
         // --- This is the bar itself ---
         Container(
           width: double.infinity, // Automatically fill width
-          height: SizeConfig.responsiveHeight(60), // Your requested height
+          height: SizeConfig.responsiveHeight(70), // Your requested height
           decoration: BoxDecoration(
             color: AppColors.white,
             borderRadius: const BorderRadius.only(
@@ -62,7 +62,7 @@ class CustomBottomTabBar extends StatelessWidget {
         if (type == BottomTabBarType.patient)
           Positioned(
             // 2. Pull the button up so it floats
-            top: -SizeConfig.responsiveHeight(28),
+            top: -SizeConfig.responsiveHeight(20),
             // No 'left' property needed! The Stack's
             // alignment: Alignment.bottomCenter
             // and the Row's 3-part split handle centering.

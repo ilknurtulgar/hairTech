@@ -1,28 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hairtech/core/base/components/patient_process_container.dart';
-import 'package:hairtech/core/base/providers/patient_home_provider.dart';
+import 'package:hairtech/core/base/controllers/patient_home_controller.dart';
 import 'package:hairtech/core/base/util/app_colors.dart';
 import 'package:hairtech/core/base/util/const_texts.dart';
 import 'package:hairtech/core/base/util/padding_util.dart';
 import 'package:hairtech/core/base/util/text_utility.dart';
+import 'package:hairtech/model/patient_update_model.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import '../model/patient_update_model.dart';
 
 class PatientProcessView extends StatelessWidget {
   const PatientProcessView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // 1. Listen to the PatientHomeProvider
-    final homeProvider = context.watch<PatientHomeProvider>();
-
-    // 2. Get the specific data and loading state we need
-    final List<PatientUpdateModel> updates = homeProvider.patientUpdates;
-    final bool isLoading = homeProvider.isLoadingUpdates;
-
-    // 3. Create a date formatter
-    final DateFormat formatter = DateFormat('dd/MM/yyyy - EEEE');
+    final homeProvider = Get.find<PatientHomeController>();
+    final DateFormat formatter = DateFormat('dd/MM/yyyy - EEEE', 'tr_TR');
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -39,14 +32,13 @@ class PatientProcessView extends StatelessWidget {
           ),
         ),
       ),
-      // 4. Use a dedicated builder function for the body
-      body: _buildBody(context, isLoading, updates, formatter),
+      body: Obx(() => _buildBody(
+          context, homeProvider.isLoadingUpdates, homeProvider.patientUpdates, formatter)),
     );
   }
 
   Widget _buildBody(BuildContext context, bool isLoading,
       List<PatientUpdateModel> updates, DateFormat formatter) {
-    // 1. Show a loading spinner if the updates stream is still loading
     if (isLoading) {
       return const Center(
         child: CircularProgressIndicator(
@@ -55,14 +47,12 @@ class PatientProcessView extends StatelessWidget {
       );
     }
 
-    // 2. If loading is done and the list is empty, show a message
     if (updates.isEmpty) {
       return const Center(
         child: Text(ConstTexts.noUpdatesYet),
       );
     }
 
-    // 3. If loading is done and we have data, show the list
     return ListView.builder(
       padding: ResponsePadding.page(),
       itemCount: updates.length,
