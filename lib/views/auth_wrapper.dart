@@ -27,8 +27,10 @@ class AuthWrapper extends StatelessWidget {
 
         if (user == null) {
           // --- Logic on Logout ---
-          context.read<UserProvider>().clearUser();
-          context.read<PatientHomeProvider>().clearData();
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            context.read<UserProvider>().clearUser();
+            context.read<PatientHomeProvider>().clearData();
+          });
           return const WelcomeView();
         }
 
