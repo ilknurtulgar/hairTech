@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hairtech/core/base/providers/patient_home_provider.dart';
+import 'package:hairtech/core/base/providers/doctor_home_provider.dart';
 import 'package:hairtech/core/base/providers/user_provider.dart';
 import 'package:hairtech/core/base/service/auth_service.dart';
 import 'package:hairtech/core/base/util/app_colors.dart';
@@ -25,7 +25,7 @@ class _PatientHomeViewState extends State<PatientHomeView> {
     final user = context.read<UserProvider>().user;
     if (user != null) {
       // Use read() here because we're in initState
-      context.read<PatientHomeProvider>().initStreams(user.uid);
+      context.read<DoctorHomeProvider>().initStreams(user.uid);
     }
   }
 
@@ -45,7 +45,7 @@ class _PatientHomeViewState extends State<PatientHomeView> {
 
     // 3. Get REAL data!
     final userName =
-        "${userProvider.user!.name}";
+        "Dr. ${userProvider.user!.name}";
 
     // 4. REMOVED the AppBar
     return Scaffold(
@@ -76,7 +76,7 @@ class _PatientHomeViewState extends State<PatientHomeView> {
                       // Implement Sign Out
                       context.read<UserProvider>().clearUser();
                       // Clear home page data on logout
-                      context.read<PatientHomeProvider>().clearData();
+                      context.read<DoctorHomeProvider>().clearData();
                       await authService.signOut();
                     },
                   ),

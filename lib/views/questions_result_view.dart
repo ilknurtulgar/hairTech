@@ -6,8 +6,7 @@ import 'package:hairtech/core/base/util/const_texts.dart';
 import 'package:hairtech/core/base/util/icon_utility.dart';
 import 'package:hairtech/core/base/util/padding_util.dart';
 import 'package:hairtech/core/base/util/text_utility.dart';
-import 'package:hairtech/views/get_started_view.dart';
-import 'package:hairtech/views/patient_signup_view.dart'; // To navigate back
+import 'package:hairtech/views/patient_signup_view.dart';
 
 class QuestionsResultView extends StatelessWidget {
   // In a real app, you'd pass the analysis result here
