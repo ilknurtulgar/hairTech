@@ -6,8 +6,10 @@ import '../core/base/util/img_utility.dart';
 import '../core/base/util/text_utility.dart';
 import '../core/base/util/const_texts.dart';
 import '../core/base/util/size_config.dart';
+//import 'patient_signup_view.dart';
 import 'patient_login_view.dart';
 import 'doctor_login_view.dart';
+import 'questions_view.dart';
 
 class GetStartedView extends StatelessWidget {
   const GetStartedView({super.key});
@@ -36,7 +38,7 @@ class GetStartedView extends StatelessWidget {
                 ImageUtility.logoDark,
                 height: 160,
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 16),
               Text(
                 "Hazırsan\nbaşlayalım!",
                 style: TextUtility.headerStyle,
@@ -45,14 +47,18 @@ class GetStartedView extends StatelessWidget {
               const SizedBox(height: 16),
               Center (
                 child: Button(
-                  text: ConstTexts.startTestButtonText,
-                  onTap: () {
-                    // print("Ön Değerlendirme");
-                  },
-                  backgroundColor: AppColors.secondary, // Orange
-                  textColor: AppColors.white,
-                  buttonHeight: SizeConfig.responsiveHeight(80),
-                ),
+                text: ConstTexts.startTestButtonText, // <-- "Ön Değerlendirme"
+                onTap: () {
+                  // --- 3. UPDATED NAVIGATION ---
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const QuestionView(),
+                    ),
+                  );
+                },
+                backgroundColor: AppColors.secondary, // Orange
+                textColor: AppColors.white,
+              ),
               ),
               const SizedBox(height: 16),
               Center (

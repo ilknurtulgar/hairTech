@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "646094031246",
+    "project_id": "hairtech-smile",
+    "storage_bucket": "hairtech-smile.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:646094031246:android:b6c4e18112294f03f17cdf",
+        "android_client_info": {
+          "package_name": "com.example.hairtech"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuuys1_mQlRHQzMXLZL0lH_7cqC2S8n7M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
