@@ -10,6 +10,7 @@ class Button extends StatelessWidget {
   final Color backgroundColor;
   final Color textColor;
   final bool isOutline;
+  final bool isLoading; // <-- 1. ADDED isLoading PROPERTY
 
   const Button({
     super.key,
@@ -20,25 +21,20 @@ class Button extends StatelessWidget {
     this.backgroundColor = AppColors.dark,
     this.textColor = AppColors.light,
     this.isOutline = false,
+    this.isLoading = false, // <-- 2. SET DEFAULT TO false
   });
 
   @override
   Widget build(BuildContext context) {
     if (isOutline) {
       return TextButton(
-        onPressed: onTap,
+        // 3. DISABLE onPressed IF LOADING
+        onPressed: isLoading ? null : onTap,
         style: TextButton.styleFrom(
           foregroundColor: textColor,
           padding: const EdgeInsets.symmetric(vertical: 16),
         ),
-        child: Text(
-          text,
-          style: TextUtility.getStyle(
-            color: textColor,
-            fontWeight: FontWeight.w600,
-            fontSize: 16,
-          ),
-        ),
+        child: _buildChild(), // <-- 4. MOVED CHILD TO A HELPER
       );
     }
 
@@ -46,7 +42,8 @@ class Button extends StatelessWidget {
       width: buttonWidth,
       height: buttonHeight,
       child: ElevatedButton(
-        onPressed: onTap,
+        // 3. DISABLE onPressed IF LOADING
+        onPressed: isLoading ? null : onTap,
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor,
           shape: RoundedRectangleBorder(
@@ -54,15 +51,31 @@ class Button extends StatelessWidget {
           ),
           elevation: 0,
         ),
-        child: Text(
-          text,
-          style: TextUtility.getStyle(
-            color: textColor,
-            fontWeight: FontWeight.w600,
-            fontSize: 16,
-          ),
-        ),
+        child: _buildChild(), // <-- 4. MOVED CHILD TO A HELPER
       ),
     );
+  }
+
+  // 5. HELPER WIDGET TO SHOW TEXT OR SPINNER
+  Widget _buildChild() {
+    if (isLoading) {
+      return SizedBox(
+        width: 24, // Standard spinner size
+        height: 24,
+        child: CircularProgressIndicator(
+          color: textColor,
+          strokeWidth: 2.5,
+        ),
+      );
+    } else {
+      return Text(
+        text,
+        style: TextUtility.getStyle(
+          color: textColor,
+          fontWeight: FontWeight.w600,
+          fontSize: 16,
+        ),
+      );
+    }
   }
 }

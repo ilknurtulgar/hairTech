@@ -4,7 +4,7 @@ extension ContextExtension on BuildContext {
   ThemeData get themeData => Theme.of(this);
   ColorScheme get colorScheme => Theme.of(this).colorScheme;
   TextTheme get textTheme => Theme.of(this).textTheme;
-  AppBarTheme get appBarTheme => Theme.of(this).appBarTheme;
+  AppBarThemeData get appBarTheme => Theme.of(this).appBarTheme;
   double get height => MediaQuery.of(this).size.height;
   double get width => MediaQuery.of(this).size.width;
   double get topPadding => MediaQuery.of(this).padding.top;
