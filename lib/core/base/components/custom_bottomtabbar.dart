@@ -157,7 +157,7 @@ class CustomBottomTabBar extends StatelessWidget {
             label,
             style: TextStyle(
               color: color,
-              fontSize: SizeConfig.responsiveWidth(14),
+              fontSize: SizeConfig.responsiveWidth(12),
               fontWeight: FontWeight.w400,
             ),
           ),

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-// Updated import to match your file name
 import 'package:hairtech/core/base/components/custom_bottomtabbar.dart';
 import 'package:hairtech/core/base/util/app_colors.dart';
-import 'package:hairtech/core/base/util/const_texts.dart';
+import 'package:hairtech/core/base/util/size_config.dart';
+//import 'package:hairtech/core/base/util/const_texts.dart';
+import 'patient_upload_view.dart';
 import 'patient_home_view.dart';
+import 'patient_process_view.dart';
 
 class MainNavigationView extends StatefulWidget {
   const MainNavigationView({super.key});
@@ -18,31 +20,25 @@ class _MainNavigationViewState extends State<MainNavigationView> {
 
   static const List<Widget> _widgetOptions = <Widget>[
     PatientHomeView(), // Index 0: Ana Sayfa
-    Scaffold(
-        body: Center(
-            child: Text(ConstTexts.cameraTabLabel))),
-    Scaffold(
-        body: Center(
-            child: Text(ConstTexts.progressTabLabel))),
+    PatientProcessView(), // <-- 2. Replace placeholder
   ];
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
     if (index == 1) {
-      // Index 1 is the camera FAB
-      print("Open Camera Modal");
-      // You can show a modal or navigate to a camera page here
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const PatientUploadView()),
+      );
     }
-  }
+    setState(() {
+      _selectedIndex = (index == 2) ? 1 : 0;
+    });
+}
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig.init(context);
     return Scaffold(
       backgroundColor: AppColors.white,
-      // The body is the currently selected page
       body: _widgetOptions.elementAt(_selectedIndex),
 
       bottomNavigationBar: CustomBottomTabBar(

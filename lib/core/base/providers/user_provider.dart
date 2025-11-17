@@ -12,11 +12,21 @@ class UserProvider with ChangeNotifier {
 
   /// Fetches user data from Firestore and notifies the app
   Future<void> fetchUserData(String uid) async {
-    // Don't refetch if user is already loaded
+    // 1. Don't re-fetch if we already have the right user
     if (_user != null && _user!.uid == uid) return;
 
+    // 2. Don't re-fetch if we are already loading
+    if (_isLoading) return;
+
     _isLoading = true;
-    notifyListeners();
+    
+    // 3. THIS IS THE FIX:
+    // We must notify *after* the current build frame is done.
+    // This safely tells the UI "I am now loading"
+    // without causing the "setState during build" error.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
     
     try {
       _user = await _db.getUserData(uid);
@@ -25,7 +35,7 @@ class UserProvider with ChangeNotifier {
     }
 
     _isLoading = false;
-    notifyListeners();
+    notifyListeners(); // This one is fine, it happens after 'await'
   }
 
   /// Clears user data on logout

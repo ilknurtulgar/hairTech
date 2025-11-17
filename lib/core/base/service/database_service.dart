@@ -81,6 +81,27 @@ class DatabaseService {
     });
   }
 
+  /// Adds a new patient update (photos + note) to Firestore
+  Future<void> addPatientUpdate({
+    required String patientUid,
+    required String patientNote,
+    required List<String> imageURLs,
+  }) async {
+    try {
+      await _db.collection('patient_updates').add({
+        'patientUid': patientUid,
+        'patientNote': patientNote,
+        'imageURLs': imageURLs,
+        'date': FieldValue.serverTimestamp(), // Let Firebase set the time
+        'doctorNote': 'Doktorunuzdan geri dönüş bekleniyor.',
+        'scores': [0, 0, 0, 0, 0], // Default scores
+      });
+    } catch (e) {
+      print("Error adding patient update: $e");
+      throw Exception("Update could not be saved.");
+    }
+  }
+
   // TODO:
   // - A service for getting `GraphicContainer` data
   // - A service for getting `nextPhotoUploadDate` from the user doc

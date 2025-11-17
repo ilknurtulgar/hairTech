@@ -107,8 +107,8 @@ class _PatientSignUpViewState extends State<PatientSignUpView> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                ImageUtility.logo,
-                height: 80,
+                ImageUtility.logoDark,
+                height: 150,
               ),
               const SizedBox(height: 32),
               Text(
@@ -165,25 +165,6 @@ class _PatientSignUpViewState extends State<PatientSignUpView> {
                   ),
                 ),
               const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    ConstTexts.loginButton,
-                    style: TextUtility.getStyle(color: AppColors.dark),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text(
-                      ConstTexts.loginButton,
-                      style: TextUtility.getStyle(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
             ],
           ),
         ),

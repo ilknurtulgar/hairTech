@@ -25,7 +25,7 @@ class PatientUpdateModel {
       patientNote: data['patientNote'] ?? '',
       doctorNote: data['doctorNote'] ?? 'Doktorunuzdan geri dönüş bekleniyor.',
       imageURLs: List<String>.from(data['imageURLs'] ?? []),
-      scores: data['scores'] ?? [0,0,0,0],
+      scores: List<int>.from(data['scores'] ?? [0, 0, 0, 0, 0]), // Default to 5 scores
     );
   }
 }

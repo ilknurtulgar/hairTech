@@ -5,6 +5,7 @@ import '../util/size_config.dart';
 import '../util/text_utility.dart';
 import 'evaluation_item.dart';
 import 'image_container.dart';
+import '../../../views/fullscreen_image_view.dart';
 
 enum ProcessContainerType { patient, doctor }
 
@@ -80,9 +81,24 @@ class PatientProcessContainer extends StatelessWidget {
                           ? SizeConfig.responsiveWidth(2)
                           : 0,
                     ),
-                    child: ImageContainer(
-                      imageUrl: imageUrls[index],
-                      size: ImageContainerSize.small,
+                    child: GestureDetector(
+                      onTap: () {
+                        // If the URL is valid, open the full-screen view
+                        if (imageUrls[index] != null &&
+                            imageUrls[index]!.isNotEmpty) {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => FullScreenImageView(
+                                imageUrl: imageUrls[index]!,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      child: ImageContainer(
+                        imageUrl: imageUrls[index],
+                        size: ImageContainerSize.small,
+                      ),
                     ),
                   ),
                 ),
