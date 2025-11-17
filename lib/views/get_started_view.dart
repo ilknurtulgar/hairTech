@@ -58,6 +58,7 @@ class GetStartedView extends StatelessWidget {
                 },
                 backgroundColor: AppColors.secondary, // Orange
                 textColor: AppColors.white,
+                buttonHeight: SizeConfig.responsiveHeight(80)
               ),
               ),
               const SizedBox(height: 16),
