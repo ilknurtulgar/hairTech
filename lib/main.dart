@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:hairtech/core/base/util/app_colors.dart';
-import 'core/base/components/icon_button.dart';
-import 'core/base/components/input_container.dart';
-import 'core/base/util/size_config.dart';
+import 'package:get/get.dart';
+import 'package:hairtech/views/auth_wrapper.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'core/base/util/app_bindings.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  await initializeDateFormatting('tr_TR', null);
+
+  // 4. Run the App
   runApp(const MyApp());
 }
 
@@ -13,45 +23,35 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Hairtech App',
+    // 5. REMOVED MultiProvider
+    // 6. CHANGED to GetMaterialApp
+    return GetMaterialApp(
+      title: 'Hairtech',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.background),
         useMaterial3: true,
+        fontFamily: 'Inter',
       ),
-      debugShowCheckedModeBanner: false, // Hides the debug banner
-      home: const PersonInfoContainerTestView(), // Test view
-    );
-  }
-}
+      debugShowCheckedModeBanner: false,
 
-class PersonInfoContainerTestView extends StatelessWidget {
-  const PersonInfoContainerTestView({super.key});
+      // 7. Add Localization
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('tr', 'TR'),
+      ],
+      locale: const Locale('tr', 'TR'),
 
-  @override
-  Widget build(BuildContext context) {
-    SizeConfig.init(context);
-    
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('PersonInfoContainer Test'),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-       
-              InputContainer(
-                hintText: 'Notunuzu buraya yazın...',
-                onChanged: (value) {
-                  print('Girilen text: $value');
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
+      // 8. Add initial bindings
+      // This tells GetX to run your AppBindings class
+      // as soon as the app starts, loading all your controllers.
+      initialBinding: AppBindings(),
+
+      // 9. AuthWrapper is now the home page.
+      // It will be simpler.
+      home: const AuthWrapper(),
     );
   }
 }

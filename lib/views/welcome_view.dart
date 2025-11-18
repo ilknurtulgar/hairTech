@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../core/base/util/app_colors.dart';
 import '../core/base/util/icon_utility.dart';
 import '../core/base/util/img_utility.dart';
 import '../core/base/util/text_utility.dart';
-import '../core/base/util/const_texts.dart';
 import 'get_started_view.dart';
+import '../core/base/util/const_texts.dart';
+import '../core/base/util/size_config.dart';
 
 const List<Map<String, String>> slideData = [
   {
     "header": ConstTexts.slideOneHeader,
-    "description": ConstTexts.slideOneDesc
+    "description": ConstTexts.slideOneDesc,
   },
   {
     "header": ConstTexts.slideTwoHeader,
-    "description": ConstTexts.slideTwoDesc
+    "description": ConstTexts.slideTwoDesc,
   },
   {
     "header": ConstTexts.slideThreeHeader,
-    "description": ConstTexts.slideThreeDesc
+    "description": ConstTexts.slideThreeDesc,
   }
 ];
 
@@ -38,23 +40,20 @@ class _WelcomeViewState extends State<WelcomeView> {
     super.dispose();
   }
 
+  // --- NAVIGATION: Helper function to go to the next screen ---
   void _goToGetStarted() {
-    if (ModalRoute.of(context)?.isCurrent != true) return;
-
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const GetStartedView()),
-    ).then((_) {
+    Get.to(() => const GetStartedView())?.then((_) {
+      // When user comes back from GetStartedView, jump back to the last slide
       if (mounted) {
         _pageController.jumpToPage(slideData.length - 1);
-        setState(() {
-          _currentPage = slideData.length - 1;
-        });
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig.init(context);
+
     return Scaffold(
       backgroundColor: AppColors.white,
       body: Column(
@@ -64,13 +63,13 @@ class _WelcomeViewState extends State<WelcomeView> {
             fit: BoxFit.cover,
             width: double.infinity,
           ),
-
           Expanded(
             child: PageView.builder(
               controller: _pageController,
-              itemCount: slideData.length + 1,
+              itemCount: slideData.length + 1, // Add 1 "dummy" page
               onPageChanged: (index) {
                 if (index == slideData.length) {
+                  // User swiped to the dummy page
                   _goToGetStarted();
                 } else {
                   setState(() {
@@ -80,7 +79,8 @@ class _WelcomeViewState extends State<WelcomeView> {
               },
               itemBuilder: (context, index) {
                 if (index == slideData.length) {
-                  return Container(color: AppColors.white);
+                  // This is the "dummy" page that triggers navigation
+                  return const Center(child: CircularProgressIndicator());
                 }
                 final slide = slideData[index];
                 return _SlideContent(
@@ -90,7 +90,6 @@ class _WelcomeViewState extends State<WelcomeView> {
               },
             ),
           ),
-
           _BottomNavBar(
             currentPage: _currentPage,
             pageCount: slideData.length,
@@ -109,6 +108,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                   curve: Curves.easeOut,
                 );
               } else {
+                // On last page, go to GetStarted
                 _goToGetStarted();
               }
             },
@@ -142,8 +142,8 @@ class _SlideContent extends StatelessWidget {
           Text(
             description,
             style: TextUtility.getStyle(
-              fontSize: 16.0, // 16px
-              color: AppColors.dark,
+              fontSize: 16.0,
+              color: AppColors.dark.withOpacity(0.7),
             ),
           ),
         ],
@@ -176,8 +176,8 @@ class _BottomNavBar extends StatelessWidget {
       decoration: const BoxDecoration(
         color: AppColors.darker,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(40),
-          topRight: Radius.circular(40),
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
         ),
       ),
       padding: EdgeInsets.fromLTRB(
@@ -186,14 +186,13 @@ class _BottomNavBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // Left Arrow
-          AnimatedOpacity(
+          Opacity(
             opacity: isFirstPage ? 0.0 : 1.0,
-            duration: const Duration(milliseconds: 300),
             child: IconButton(
               onPressed: isFirstPage ? null : onLeftTap,
               icon: const Icon(
                 AppIcons.arrowLeft,
-                color: AppColors.light,
+                color: AppColors.lighter,
               ),
             ),
           ),
@@ -205,22 +204,12 @@ class _BottomNavBar extends StatelessWidget {
             }),
           ),
 
-          // Right Arrow
+          // Right Arrow (or Checkmark)
           IconButton(
             onPressed: onRightTap,
-            icon: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              transitionBuilder: (child, animation) {
-                return ScaleTransition(
-                  scale: animation,
-                  child: FadeTransition(opacity: animation, child: child),
-                );
-              },
-              child: Icon(
-                isLastPage ? Icons.check_rounded : AppIcons.arrowRight,
-                key: ValueKey<bool>(isLastPage),
-                color: AppColors.light,
-              ),
+            icon: Icon(
+              isLastPage ? Icons.check : AppIcons.arrowRight,
+              color: AppColors.lighter,
             ),
           ),
         ],
@@ -237,12 +226,11 @@ class _PageIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      curve: Curves.easeOutCubic,
       margin: const EdgeInsets.symmetric(horizontal: 4),
       height: 10,
-      width: isActive ? 24.0 : 10.0,
+      width: isActive ? 24 : 10, // Active dot is wider
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        shape: BoxShape.circle,
         color: isActive ? AppColors.lighter : AppColors.light,
       ),
     );

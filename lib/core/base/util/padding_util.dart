@@ -8,12 +8,14 @@ class ResponsePadding {
     return EdgeInsets.all(SizeConfig.responsiveWidth(15));
   }
 
-  /// Reklam sayfası padding (top 50)
+  /// Reklam sayfası padding (top 50, left and rigth 16)
   static EdgeInsets adPage() {
-    return EdgeInsets.only(
-      top: SizeConfig.responsiveHeight(50)
-    );
-  }
+  return EdgeInsets.only(
+    top: SizeConfig.responsiveHeight(50),
+    left: SizeConfig.responsiveWidth(32),
+    right: SizeConfig.responsiveWidth(32),
+  );
+}
 
   /// Randevu listeleri arası boşluk (vertical)
   static EdgeInsets appointmentList() {
@@ -32,7 +34,7 @@ class ResponsePadding {
 
   /// Randevu kaydırmalı containerlar (büyük 25, küçük 20)
   static double appointmentScrollLarge() => SizeConfig.responsiveWidth(25);
-  static double appointmentScrollSmall() => SizeConfig.responsiveWidth(20);
+  static double appointmentScrollSmall() => SizeConfig.responsiveWidth(5);
 
   /// Genel containerlar arası boşluk
   static EdgeInsets generalContainer() {

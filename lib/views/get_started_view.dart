@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../core/base/components/button.dart';
 import '../core/base/util/app_colors.dart';
 import '../core/base/util/icon_utility.dart';
 import '../core/base/util/img_utility.dart';
 import '../core/base/util/text_utility.dart';
-import '../core/base/util/const_texts.dart';
 import 'patient_login_view.dart';
 import 'doctor_login_view.dart';
+import 'questions_view.dart';
+import '../core/base/util/const_texts.dart';
 
 class GetStartedView extends StatelessWidget {
   const GetStartedView({super.key});
@@ -20,7 +22,7 @@ class GetStartedView extends StatelessWidget {
         backgroundColor: AppColors.white,
         leading: IconButton(
           icon: const Icon(AppIcons.arrowLeft, color: AppColors.dark),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Get.back(),
         ),
       ),
       body: Center(
@@ -31,33 +33,30 @@ class GetStartedView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Image.asset(
-                ImageUtility.logoDark,
-                height: 160,
+                ImageUtility.logo,
+                height: 80,
               ),
               const SizedBox(height: 48),
               Text(
-                "Hazırsan\nbaşlayalım!",
+                ConstTexts.getStartedHeader,
                 style: TextUtility.headerStyle,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),
               Button(
-                text: ConstTexts.startTestButtonText,
+                text: ConstTexts.startTestButtonText, // "Ön Değerlendirme"
                 onTap: () {
-                  // print("Ön Değerlendirme");
+                  // FIX: Navigate directly to the working questionnaire
+                  Get.to(() => const QuestionnaireView());
                 },
-                backgroundColor: AppColors.secondary, // Orange
+                backgroundColor: AppColors.secondary,
                 textColor: AppColors.white,
               ),
               const SizedBox(height: 16),
               Button(
                 text: ConstTexts.registeredPatientLoginButtonText,
                 onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const PatientLoginView(),
-                    ),
-                  );
+                  Get.to(() => const PatientLoginView());
                 },
                 backgroundColor: AppColors.primary,
                 textColor: AppColors.white,
@@ -66,11 +65,7 @@ class GetStartedView extends StatelessWidget {
               Button(
                 text: ConstTexts.doctorLoginButtonText,
                 onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const DoctorLoginView(),
-                    ),
-                  );
+                  Get.to(() => const DoctorLoginView());
                 },
                 isOutline: true,
                 textColor: AppColors.dark,
