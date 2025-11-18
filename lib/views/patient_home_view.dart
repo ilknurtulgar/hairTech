@@ -20,6 +20,7 @@ import '../core/base/components/patient_process_container.dart' show PatientProc
 import '../core/base/service/database_service.dart' show DatabaseService;
 import '../model/user_model.dart' show UserModel;
 
+//etc
 class PatientHomeView extends GetView<UserController> {
   const PatientHomeView({super.key});
 

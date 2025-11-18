@@ -9,8 +9,7 @@ import 'package:hairtech/views/main_navigation_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:intl/date_symbol_data_local.dart';
-
+import 'package:intl/date_symbol_data_local.dart'"";
 import 'core/base/util/app_bindings.dart';
 import 'firebase_options.dart';
 import 'product/message/show/show_messages.dart';
@@ -21,16 +20,16 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await initializeDateFormatting('tr_TR', null);
-  CameraDescription? frontCamera;
-  try {
-    final cameras = await availableCameras();
-    frontCamera = cameras.firstWhere(
-      (camera) => camera.lensDirection == CameraLensDirection.front,
-    );
-  } on CameraException catch (e) {
-    ShowMessages.logError(e.code, e.description);
-  }
 
+  //// CameraDescription? frontCamera;
+  // //try {
+  //   //final cameras = await availableCameras();
+  //   frontCamera = cameras.firstWhere(
+  //     (camera) => camera.lensDirection == CameraLensDirection.front,
+  //   );
+  // } on CameraException catch (e) {
+  //   ShowMessages.logError(e.code, e.description);
+  // }
   runApp(const MyApp());
 }
 
