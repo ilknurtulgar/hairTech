@@ -31,15 +31,22 @@ class CommandMessage {
 
   // Frame
   static String outsideFrame = "İlgili alan kadraj dışı!";
+  static String noShoulder =
+      "Omuzlarınız algılanamadı. Lütfen kadraja girin!"; //
 
   // Phone Position
   static String phoneLeftPosition = "Telefonu biraz daha solda konumlandırın";
   static String phoneRightPosition = "Telefonu biraz daha sağda konumlandırın";
-  
+
   // First Command
+  static String startingCountDown =
+      "Fotoğraf çekimi 3 saniye içinde başlayacak. İlk çekim ön yüz çekimi!";
   static String firstLeft = "Kafanızı sola doğru çevirin!";
   static String firstRight = "Kafanızı sağa doğru çevirin!";
   static String firstTop =
-      "Kollarınızı uzatıp telefonu kafanızın üstünde tutun!";
-  static String firstNape = "Telefonu ensenize doğru eğin!";
+      "Kollarınızı uzatıp telefonu kafanızın üstünde tepenizin ortasına gelecek şekilde tutun!"; //
+  static String firstNape = "Telefonu biraz daha geride tutun!"; //
+
+  // Complete
+  static String photoEnd = "Fotoğraf çekimleri başarıyla tamamlandı!";
 }
