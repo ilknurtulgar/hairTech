@@ -143,8 +143,9 @@ class DatabaseService {
   Stream<List<PatientUpdateModel>> getPendingPatientUpdates(String doctorUid) {
     return _db
         .collection('patient_updates')
-        .where('doctorUid', isEqualTo: doctorUid)
-        .where('doctorNote', isEqualTo: 'Doktorunuzdan geri dönüş bekleniyor.')
+        //.where('doctorUid', isEqualTo: doctorUid)
+        //.where('scores', isEqualTo: [0, 0, 0, 0, 0])
+        //.where('doctorNote', isEqualTo: 'Doktorunuzdan geri dönüş bekleniyor.')
         .orderBy('date', descending: true) // Get the newest first
         .snapshots()
         .map((snapshot) {
@@ -171,6 +172,33 @@ class DatabaseService {
     } catch (e) {
       print("Error adding patient update: $e");
       throw Exception("Update could not be saved.");
+    }
+  }
+
+  Future<void> submitDoctorReview({
+    required String updateId,
+    required String doctorNote,
+    required double growthRating, // 1-5 scale
+    required double densityRating, // 1-5 scale
+    required double naturalnessRating, // 1-5 scale
+    required double healthRating, // 1-5 scale
+    required double overallRating, // 1-5 scale
+  }) async {
+    try {
+      await _db.collection('patient_updates').doc(updateId).update({
+        'doctorNote': doctorNote,
+        'scores': [
+          growthRating.round(),
+          densityRating.round(),
+          naturalnessRating.round(),
+          healthRating.round(),
+          overallRating.round(),
+        ],
+        'last-update': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      print("Error submitting doctor review: $e");
+      throw Exception("Review could not be saved.");
     }
   }
 
