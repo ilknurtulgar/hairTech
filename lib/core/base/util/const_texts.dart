@@ -73,6 +73,7 @@ class ConstTexts {
   static const String activeAppointment = "Aktif Randevu";
   static const String lastReviewsFromDoctor = "Doktorundan Son Geribildirimler";
   static const String patientNote = "Hasta Notu";
+  static const String newAssignedAppointments = "Yeni Atanan Randevular";
 
   static const String uploadHeader = "Fotoğraf Yükle";
   static const String uploadSubHeader = "Lütfen 5 adet fotoğraf yükleyin.";

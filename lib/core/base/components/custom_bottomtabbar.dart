@@ -27,7 +27,7 @@ class CustomBottomTabBar extends StatelessWidget {
         // --- This is the bar itself ---
         Container(
           width: double.infinity, // Automatically fill width
-          height: SizeConfig.responsiveHeight(70), // Your requested height
+          height: SizeConfig.responsiveHeight(80), // Increased height
           decoration: BoxDecoration(
             color: AppColors.white,
             borderRadius: const BorderRadius.only(
@@ -44,9 +44,11 @@ class CustomBottomTabBar extends StatelessWidget {
             ],
           ),
           child: SafeArea(
+            top: false,
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: SizeConfig.responsiveHeight(5),
+              padding: EdgeInsets.only(
+                top: SizeConfig.responsiveHeight(8),
+                bottom: SizeConfig.responsiveHeight(4),
               ),
               child: Row(
                 // The Row now contains 3 (or 2) Expanded children
@@ -58,15 +60,12 @@ class CustomBottomTabBar extends StatelessWidget {
           ),
         ),
 
-        // --- This is the Floating Button, layered on top ---
+        // --- This is the Floating Icon Only, layered on top ---
         if (type == BottomTabBarType.patient)
           Positioned(
-            // 2. Pull the button up so it floats
-            top: -SizeConfig.responsiveHeight(20),
-            // No 'left' property needed! The Stack's
-            // alignment: Alignment.bottomCenter
-            // and the Row's 3-part split handle centering.
-            child: _buildFloatingCameraButton(),
+            // Button positioned so 1/3 is inside, 2/3 is outside the bar
+            top: -SizeConfig.responsiveWidth(60) * 2 / 3,
+            child: _buildFloatingCameraIcon(),
           ),
       ],
     );
@@ -114,11 +113,33 @@ class CustomBottomTabBar extends StatelessWidget {
           isSelected: selectedIndex == 0,
         ),
       ),
-      // --- Section 2: Empty Spacer ---
-      // This empty box holds the space for the
-      // floating button to be centered over.
+      // --- Section 2: Camera Tab (text only, icon floats above) ---
       Expanded(
-        child: Container(),
+        child: GestureDetector(
+          onTap: () => onTap(1),
+          behavior: HitTestBehavior.opaque,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Spacer to match icon height in other tabs
+              SizedBox(height: SizeConfig.responsiveWidth(22)),
+              SizedBox(height: SizeConfig.responsiveHeight(4)),
+              Text(
+                ConstTexts.cameraTabLabel,
+                style: TextStyle(
+                  color: selectedIndex == 1 ? AppColors.dark : AppColors.darkgray,
+                  fontSize: SizeConfig.responsiveWidth(11),
+                  fontWeight: FontWeight.w400,
+                  height: 1.0,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
       ),
       // --- Section 3: Progress ---
       Expanded(
@@ -150,64 +171,50 @@ class CustomBottomTabBar extends StatelessWidget {
           Icon(
             icon,
             color: color,
-            size: SizeConfig.responsiveWidth(20),
+            size: SizeConfig.responsiveWidth(22),
           ),
-          SizedBox(height: SizeConfig.responsiveHeight(2)),
+          SizedBox(height: SizeConfig.responsiveHeight(4)),
           Text(
             label,
             style: TextStyle(
               color: color,
-              fontSize: SizeConfig.responsiveWidth(12),
+              fontSize: SizeConfig.responsiveWidth(11),
               fontWeight: FontWeight.w400,
+              height: 1.0,
             ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildFloatingCameraButton() {
-    final isSelected = selectedIndex == 1;
-    final textColor = isSelected ? AppColors.dark : AppColors.darkgray;
-
-    // 5. REMOVED the Transform.translate.
-    // The Positioned widget in build() handles this now.
+  Widget _buildFloatingCameraIcon() {
+    // Only the circular icon that floats above
     return GestureDetector(
       onTap: () => onTap(1),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: SizeConfig.responsiveWidth(60),
-            height: SizeConfig.responsiveWidth(60),
-            decoration: BoxDecoration(
-              color: AppColors.dark,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 10,
-                  spreadRadius: 1,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+      child: Container(
+        width: SizeConfig.responsiveWidth(70),
+        height: SizeConfig.responsiveWidth(70),
+        decoration: BoxDecoration(
+          color: AppColors.dark,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 10,
+              spreadRadius: 1,
+              offset: const Offset(0, 2),
             ),
-            child: Icon(
-              Icons.camera_alt_outlined,
-              color: AppColors.white,
-              size: SizeConfig.responsiveWidth(28),
-            ),
-          ),
-          SizedBox(height: SizeConfig.responsiveHeight(4)),
-          Text(
-            ConstTexts.cameraTabLabel,
-            style: TextStyle(
-              color: textColor,
-              fontSize: SizeConfig.responsiveHeight(12),
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        ],
+          ],
+        ),
+        child: Icon(
+          Icons.camera_alt_outlined,
+          color: AppColors.white,
+          size: SizeConfig.responsiveWidth(28),
+        ),
       ),
     );
   }
