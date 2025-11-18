@@ -8,20 +8,23 @@ class AppointmentTable extends StatefulWidget {
   final List<DateItem> dates;
   final List<String> timeSlots;
   final ValueChanged<AppointmentSelection> onAppointmentSelected;
+  final int selectedDateIndex;
+  final ValueChanged<int> onDateTabChanged;
 
   const AppointmentTable({
-    Key? key,
+    super.key,
     required this.dates,
     required this.timeSlots,
     required this.onAppointmentSelected,
-  }) : super(key: key);
+    required this.selectedDateIndex,
+    required this.onDateTabChanged,
+  });
 
   @override
   State<AppointmentTable> createState() => _AppointmentTableState();
 }
 
 class _AppointmentTableState extends State<AppointmentTable> {
-  int? _selectedDateIndex;
   int? _selectedTimeIndex;
 
   @override
@@ -31,9 +34,10 @@ class _AppointmentTableState extends State<AppointmentTable> {
         DateTabBar(
           size: DateTabBarSize.big,
           dates: widget.dates,
+          selectedIndex: widget.selectedDateIndex,
           onDateSelected: (index) {
+            widget.onDateTabChanged(index);
             setState(() {
-              _selectedDateIndex = index;
               _selectedTimeIndex = null;
             });
           },
@@ -66,16 +70,14 @@ class _AppointmentTableState extends State<AppointmentTable> {
                       setState(() {
                         _selectedTimeIndex = timeIndex;
                       });
-                      if (_selectedDateIndex != null) {
-                        widget.onAppointmentSelected(
-                          AppointmentSelection(
-                            dateIndex: _selectedDateIndex!,
-                            timeIndex: timeIndex,
-                            date: widget.dates[_selectedDateIndex!],
-                            timeSlot: timeSlot,
-                          ),
-                        );
-                      }
+                      widget.onAppointmentSelected(
+                        AppointmentSelection(
+                          dateIndex: widget.selectedDateIndex,
+                          timeIndex: timeIndex,
+                          date: widget.dates[widget.selectedDateIndex],
+                          timeSlot: timeSlot,
+                        ),
+                      );
                     },
                     child: Container(
                       width: SizeConfig.responsiveWidth(70),

@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:hairtech/core/base/controllers/auth_controller.dart';
+import 'package:hairtech/core/base/controllers/doctor_home_controller.dart';
 import 'package:hairtech/core/base/controllers/patient_home_controller.dart';
 import 'package:hairtech/core/base/controllers/user_controller.dart';
 import 'package:hairtech/core/base/service/auth_service.dart';
@@ -18,5 +19,6 @@ class AppBindings extends Bindings {
     Get.put(AuthController(), permanent: true);
     Get.put(UserController(), permanent: true);
     Get.put(PatientHomeController(), permanent: true);
+    Get.put(DoctorHomeController(), permanent: true);
   }
 }

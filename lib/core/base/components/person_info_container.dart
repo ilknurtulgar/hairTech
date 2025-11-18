@@ -9,6 +9,8 @@ class PersonInfoContainer extends StatelessWidget {
   final String subtitle;
   final bool showArrow;
   final VoidCallback? onTap;
+  final Color? borderColor;
+  final bool isSelected;
 
   const PersonInfoContainer({
     Key? key,
@@ -16,16 +18,22 @@ class PersonInfoContainer extends StatelessWidget {
     required this.subtitle,
     this.showArrow = false,
     this.onTap,
+    this.borderColor,
+    this.isSelected = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final container = Container(
       width: SizeConfig.responsiveWidth(348),
-      height: SizeConfig.responsiveHeight(100),
+      height: SizeConfig.responsiveHeight(80),
       decoration: BoxDecoration(
         color: AppColors.lightgray,
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: borderColor ?? (isSelected ? AppColors.secondary : Colors.transparent),
+          width: 2,
+        ),
       ),
       padding: ResponsePadding.generalContainer(),
       child: Row(
@@ -33,60 +41,57 @@ class PersonInfoContainer extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(4),
             child: Icon(
-                Icons.account_circle_sharp,
-                size: SizeConfig.responsiveWidth(35),
-                color: AppColors.darker
-              ),
-          ),  
-          
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextUtility.getStyle(
-                  fontSize: SizeConfig.responsiveWidth(18),
-                  fontWeight: FontWeight.w800,
-                  fontStyle: FontStyle.italic,
-                  color: AppColors.darker,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              SizedBox(height: SizeConfig.responsiveHeight(2)),
-              Text(
-                subtitle,
-                style: TextUtility.getStyle(
-                  fontSize: SizeConfig.responsiveWidth(12),
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.darker,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+              Icons.account_circle_sharp,
+              size: SizeConfig.responsiveWidth(35),
+              color: AppColors.darker,
+            ),
           ),
-          
-          
-          if (showArrow)
+          SizedBox(width: SizeConfig.responsiveWidth(12)),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextUtility.getStyle(
+                    fontSize: SizeConfig.responsiveWidth(18),
+                    fontWeight: FontWeight.w800,
+                    fontStyle: FontStyle.italic,
+                    color: AppColors.darker,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: SizeConfig.responsiveHeight(2)),
+                Text(
+                  subtitle,
+                  style: TextUtility.getStyle(
+                    fontSize: SizeConfig.responsiveWidth(12),
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.darker,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+          if (showArrow) ...[
+            SizedBox(width: SizeConfig.responsiveWidth(8)),
             Icon(
               Icons.arrow_forward_ios,
-              size: SizeConfig.responsiveWidth(10),
+              size: SizeConfig.responsiveWidth(20),
               color: AppColors.secondary,
             ),
+          ],
         ],
       ),
     );
 
-    if (onTap != null) {
-      return InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
-        child: container,
-      );
-    }
-
-    return container;
+    return GestureDetector(
+      onTap: onTap,
+      child: container,
+    );
   }
 }

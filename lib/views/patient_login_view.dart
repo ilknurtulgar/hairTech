@@ -8,6 +8,7 @@ import '../core/base/util/img_utility.dart';
 //import '../core/base/util/text_utility.dart';
 //import 'patient_signup_view.dart';
 import '../core/base/service/auth_service.dart'; // <-- 2. Import AuthService
+import '../core/base/service/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // <-- 2. Import User
 
 // 3. Change StatefulWidget to StatelessWidget
@@ -37,16 +38,47 @@ class PatientLoginView extends StatelessWidget {
         return;
       }
 
+      // Check user type BEFORE login
+      final dbService = DatabaseService();
+      final userData = await dbService.getUserByEmail(email);
+      
+      if (userData != null && userData.isDoctor) {
+        // This is a doctor account, cannot login as patient
+        print("⚠️ is_doctor: true - Bu hekim hesabı");
+        isLoading.value = false;
+        
+        // Show alert dialog
+        if (context.mounted) {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext dialogContext) {
+              return AlertDialog(
+                title: const Text('Hatalı Giriş'),
+                content: const Text(
+                  'Bu hesap hekim hesabıdır. Lütfen "Hekim Girişi" butonunu kullanarak giriş yapın.'
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop(); // Sadece dialog'u kapat
+                    },
+                    child: const Text('Tamam'),
+                  ),
+                ],
+              );
+            },
+          );
+        }
+        return;
+      }
+
+      // User type is correct, proceed with login
       final result = await authService.signInWithEmailPassword(email, password);
 
       if (result is User) {
-        // 6. We DON'T pre-fetch data here. The AuthController
-        // will see the new user, call Get.offAll(), which will
-        // load MainNavigationView, which will load PatientHomeView,
-        // which will then load its own data.
-        // We also don't navigate. AuthController handles it.
         print("Login Success! User ID: ${result.uid}");
-        // We just stop loading. AuthController will handle the redirect.
+        // AuthController will handle the redirect.
         isLoading.value = false;
       } else if (result is String) {
         errorMessage.value = result;

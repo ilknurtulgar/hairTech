@@ -6,8 +6,8 @@ import '../core/base/util/app_colors.dart';
 import '../core/base/util/const_texts.dart';
 import '../core/base/util/icon_utility.dart';
 import '../core/base/service/auth_service.dart';
+import '../core/base/service/database_service.dart';
 import '../core/base/util/img_utility.dart';
-//import '../core/base/util/text_utility.dart';
 
 class DoctorLoginView extends StatelessWidget {
   const DoctorLoginView({super.key});
@@ -34,12 +34,48 @@ class DoctorLoginView extends StatelessWidget {
         return;
       }
 
+      // Check user type BEFORE login
+      final dbService = DatabaseService();
+      final userData = await dbService.getUserByEmail(email);
+      
+      if (userData != null && !userData.isDoctor) {
+        // This is a patient account, cannot login as doctor
+        print("⚠️ is_doctor: false - Bu hasta hesabı");
+        isLoading.value = false;
+        
+        // Show alert dialog
+        if (context.mounted) {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext dialogContext) {
+              return AlertDialog(
+                title: const Text('Hatalı Giriş'),
+                content: const Text(
+                  'Bu hesap hasta hesabıdır. Lütfen "Kayıtlı Hasta Girişi" butonunu kullanarak giriş yapın.'
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop(); // Close alert
+                      Navigator.of(context).pop(); // Go back to previous page
+                    },
+                    child: const Text('Tamam'),
+                  ),
+                ],
+              );
+            },
+          );
+        }
+        return;
+      }
+
+      // User type is correct, proceed with login
       final result = await authService.signInWithEmailPassword(email, password);
 
       if (result is User) {
-        // TODO: Add extra check: is this user a doctor?
         print("Doctor Login Success! User ID: ${result.uid}");
-        // AuthController will handle the redirect.
+        // AuthController will handle the redirect and check user type
         isLoading.value = false;
       } else if (result is String) {
         errorMessage.value = result;
@@ -52,9 +88,18 @@ class DoctorLoginView extends StatelessWidget {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: AppColors.white,
-        leading: IconButton(
-          icon: const Icon(AppIcons.arrowLeft, color: AppColors.dark),
-          onPressed: () => Get.back(),
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(AppIcons.arrowLeft, color: AppColors.dark),
+            onPressed: () {
+              if (Navigator.of(context).canPop()) {
+                Navigator.of(context).pop();
+              } else {
+                // Ana sayfaya yönlendir (ör: WelcomeView veya AuthWrapper)
+                Get.offAllNamed('/');
+              }
+            },
+          ),
         ),
       ),
       body: Center(

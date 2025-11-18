@@ -10,12 +10,14 @@ class DateTabBar extends StatefulWidget {
   final DateTabBarSize size;
   final List<DateItem> dates;
   final ValueChanged<int> onDateSelected;
+  final int selectedIndex;
 
   const DateTabBar({
     Key? key,
     required this.size,
     required this.dates,
     required this.onDateSelected,
+    this.selectedIndex = 0,
   }) : super(key: key);
 
   @override
@@ -24,6 +26,15 @@ class DateTabBar extends StatefulWidget {
 
 class _DateTabBarState extends State<DateTabBar> {
   int _selectedIndex = 0;
+    @override
+    void didUpdateWidget(DateTabBar oldWidget) {
+      super.didUpdateWidget(oldWidget);
+      if (widget.selectedIndex != _selectedIndex) {
+        setState(() {
+          _selectedIndex = widget.selectedIndex;
+        });
+      }
+    }
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -77,9 +88,6 @@ class _DateTabBarState extends State<DateTabBar> {
                   ),
                   child: GestureDetector(
                     onTap: () {
-                      setState(() {
-                        _selectedIndex = index;
-                      });
                       widget.onDateSelected(index);
                     },
                     child: Container(
