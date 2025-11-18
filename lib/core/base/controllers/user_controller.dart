@@ -21,6 +21,10 @@ class UserController extends GetxController {
     _isLoading.value = false;
   }
 
+  void setUser(UserModel userData) {
+    _user.value = userData;
+  }
+
   void clearUser() {
     _user.value = null;
   }

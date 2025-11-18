@@ -4,12 +4,15 @@ class AppointmentModel {
   final String uid;
   final Timestamp dateTime;
   final String patientUid;
-  // You can add doctorUid, status, etc.
+  final String doctorUid;
+  final String status;
 
   AppointmentModel({
     required this.uid,
     required this.dateTime,
     required this.patientUid,
+    required this.doctorUid,
+    required this.status,
   });
 
   factory AppointmentModel.fromFirestore(DocumentSnapshot doc) {
@@ -18,6 +21,8 @@ class AppointmentModel {
       uid: doc.id,
       dateTime: data['dateTime'] ?? Timestamp.now(),
       patientUid: data['patientUid'] ?? '',
+      doctorUid: data['doctorUid'] ?? '',
+      status: data['status'] ?? '',
     );
   }
 }

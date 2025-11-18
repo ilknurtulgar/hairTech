@@ -86,16 +86,16 @@ class CustomBottomTabBar extends StatelessWidget {
         child: _buildTabItem(
           icon: Icons.calendar_today,
           label: ConstTexts.appointmentsTabLabel,
-          index: 2,
-          isSelected: selectedIndex == 2,
+          index: 1,
+          isSelected: selectedIndex == 1,
         ),
       ),
       Expanded(
         child: _buildTabItem(
           icon: Icons.show_chart,
           label: ConstTexts.patientsTabLabel,
-          index: 3,
-          isSelected: selectedIndex == 3,
+          index: 2,
+          isSelected: selectedIndex == 2,
         ),
       ),
     ];

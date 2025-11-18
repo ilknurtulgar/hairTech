@@ -37,7 +37,7 @@ class PatientHomeController extends GetxController {
       _activeAppointments.value = data;
       _isLoadingAppointments.value = false;
     }, onError: (e) {
-      print("Error in appointments stream: $e");
+      // print("Error in appointments stream: $e");
       _isLoadingAppointments.value = false;
     });
 
