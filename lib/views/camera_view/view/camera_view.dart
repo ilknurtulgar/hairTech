@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hairtech/views/camera_view/view_model/camera_view_model.dart';
 
+import '../../../core/base/util/size_config.dart';
 import '../../../core/base/view/base_view.dart';
 import '../../../product/component/camera_viewer.dart';
 import '../../../product/component/image_holder.dart';
@@ -32,8 +33,8 @@ class CameraView extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(
-                          width: 300,
-                          height: 400,
+                          width: SizeConfig.responsiveWidth(300), //300,
+                          height: SizeConfig.responsiveHeight(400), //400,
                           child: Stack(
                             children: [
                               CustomCameraPreview(
@@ -58,20 +59,21 @@ class CameraView extends StatelessWidget {
       onTap: () {
         if (!controller.isStreaming) {
           controller.isStreaming = true;
-
           controller.startCountdown(); // async olarak başlat
-
           // kamera stream'i başlat — burada TTS yok
           controller.cameraController.startImageStream((image) async {
             await controller.streamImage(camera, image);
           });
+        } else {
+          // Fotoğraf çekimini baştan başlatma
+          controller.tryAgain();
         }
       },
       child: Padding(
         padding: const EdgeInsets.only(top: 20),
         child: Container(
-          height: 75,
-          width: 75,
+          height: SizeConfig.responsiveHeight(75), // 75,
+          width: SizeConfig.responsiveHeight(75), // 75
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
@@ -95,8 +97,8 @@ class CameraView extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(10),
         child: Container(
-          height: 70,
-          width: 310,
+          height: SizeConfig.responsiveHeight(70), //70,
+          width: SizeConfig.responsiveWidth(310), //310,
           decoration: BoxDecoration(
             color: const Color(0xFF90A8C3),
             borderRadius: BorderRadius.circular(12),

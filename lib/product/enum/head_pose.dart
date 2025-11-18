@@ -1,5 +1,3 @@
-
-
 import '../message/util/command_message.dart';
 
 enum HeadPose { front, left, right, top, nape }
@@ -19,8 +17,9 @@ extension HeadPoseExtension on HeadPose {
         return "Önden çekim";
     }
   }
+
   String get shortName {
-switch (this) {
+    switch (this) {
       case HeadPose.left:
         return "Sol";
       case HeadPose.right:
@@ -38,9 +37,9 @@ switch (this) {
   double get suitableAngle {
     switch (this) {
       case HeadPose.left:
-        return 45;
-      case HeadPose.right:
         return -45;
+      case HeadPose.right:
+        return 45;
       case HeadPose.top:
         return -20;
       case HeadPose.nape:
@@ -53,9 +52,9 @@ switch (this) {
   List<double> get suitableAngles {
     switch (this) {
       case HeadPose.left:
-        return [0, 45, 0];
-      case HeadPose.right:
         return [0, -45, 0];
+      case HeadPose.right:
+        return [0, 45, 0];
       case HeadPose.top:
         return [-20, 0, 0];
       case HeadPose.nape:
@@ -86,8 +85,8 @@ switch (this) {
 
   // Phone slope
   double get phonePitch {
-    if (this == HeadPose.top) return 5; // 0
-    if (this == HeadPose.nape) return -30;
+    if (this == HeadPose.top) return 3; // 0
+    if (this == HeadPose.nape) return -10;
     return 90;
   }
 
@@ -95,8 +94,8 @@ switch (this) {
 
   // Phone distance
   double get phoneDistance {
-    if (this == HeadPose.top || this == HeadPose.nape) return 30;
-    return 25;
+    //if (this == HeadPose.top || this == HeadPose.nape) return 45; //30
+    return 20;
   }
 
   double get distanceTolerance => 5;
@@ -105,9 +104,9 @@ switch (this) {
   String get firstCommand {
     switch (this) {
       case HeadPose.left:
-        return CommandMessage.firstLeft;
-      case HeadPose.right:
         return CommandMessage.firstRight;
+      case HeadPose.right:
+        return CommandMessage.firstLeft;
       case HeadPose.top:
         return CommandMessage.firstTop;
       case HeadPose.nape:
