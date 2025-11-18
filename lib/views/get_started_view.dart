@@ -69,6 +69,7 @@ class GetStartedView extends StatelessWidget {
                 },
                 isOutline: true,
                 textColor: AppColors.dark,
+                backgroundColor: AppColors.white,
               ),
             ],
           ),

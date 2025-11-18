@@ -8,6 +8,7 @@ import '../core/base/util/const_texts.dart';
 import '../core/base/util/icon_utility.dart';
 import '../core/base/util/text_utility.dart';
 import '../core/base/service/auth_service.dart';
+import 'appointment_view.dart';
 
 class PatientSignUpView extends StatelessWidget {
   const PatientSignUpView({super.key});
@@ -57,6 +58,11 @@ class PatientSignUpView extends StatelessWidget {
         // Success! AuthController will handle the redirect.
         print("Signup Success! User ID: ${result.uid}");
         isLoading.value = false;
+        Get.offAll(() => AppointmentView(
+          onAppointmentConfirmed: () {
+            Get.offAllNamed('/patientHome');
+          },
+        ));
       } else if (result is String) {
         errorMessage.value = result;
         isLoading.value = false;

@@ -35,7 +35,6 @@ class _QuestionnaireViewState extends State<QuestionnaireView> {
     print("Submitting answers:");
     print(_answers);
 
-    // TODO: Send _answers to Firebase
 
     Get.to(() => const QuestionsResultView());
   }
@@ -70,7 +69,7 @@ class _QuestionnaireViewState extends State<QuestionnaireView> {
               questionNumber: 1,
               questionText: ConstTexts.questionViewQ1,
               answerChoices: ConstTexts.yesNoList,
-              onAnswerChanged: (answer) => _answers[1] = answer!,
+              onAnswerChanged: (answer) => _answers[1] = answer,
             ),
             const SizedBox(height: 16),
             QuestionContainer(

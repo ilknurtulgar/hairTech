@@ -40,10 +40,8 @@ class _WelcomeViewState extends State<WelcomeView> {
     super.dispose();
   }
 
-  // --- NAVIGATION: Helper function to go to the next screen ---
   void _goToGetStarted() {
     Get.to(() => const GetStartedView())?.then((_) {
-      // When user comes back from GetStartedView, jump back to the last slide
       if (mounted) {
         _pageController.jumpToPage(slideData.length - 1);
       }
@@ -66,10 +64,9 @@ class _WelcomeViewState extends State<WelcomeView> {
           Expanded(
             child: PageView.builder(
               controller: _pageController,
-              itemCount: slideData.length + 1, // Add 1 "dummy" page
+              itemCount: slideData.length + 1,
               onPageChanged: (index) {
                 if (index == slideData.length) {
-                  // User swiped to the dummy page
                   _goToGetStarted();
                 } else {
                   setState(() {
@@ -79,7 +76,6 @@ class _WelcomeViewState extends State<WelcomeView> {
               },
               itemBuilder: (context, index) {
                 if (index == slideData.length) {
-                  // This is the "dummy" page that triggers navigation
                   return const Center(child: CircularProgressIndicator());
                 }
                 final slide = slideData[index];
@@ -108,7 +104,6 @@ class _WelcomeViewState extends State<WelcomeView> {
                   curve: Curves.easeOut,
                 );
               } else {
-                // On last page, go to GetStarted
                 _goToGetStarted();
               }
             },
@@ -152,7 +147,6 @@ class _SlideContent extends StatelessWidget {
   }
 }
 
-// Helper Widget for the Bottom Navigation Bar (Fixed)
 class _BottomNavBar extends StatelessWidget {
   final int currentPage;
   final int pageCount;
@@ -185,7 +179,6 @@ class _BottomNavBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Left Arrow
           Opacity(
             opacity: isFirstPage ? 0.0 : 1.0,
             child: IconButton(
@@ -197,14 +190,12 @@ class _BottomNavBar extends StatelessWidget {
             ),
           ),
 
-          // Page Indicator
           Row(
             children: List.generate(pageCount, (index) {
               return _PageIndicator(isActive: index == currentPage);
             }),
           ),
 
-          // Right Arrow (or Checkmark)
           IconButton(
             onPressed: onRightTap,
             icon: Icon(
@@ -228,7 +219,7 @@ class _PageIndicator extends StatelessWidget {
       duration: const Duration(milliseconds: 300),
       margin: const EdgeInsets.symmetric(horizontal: 4),
       height: 10,
-      width: isActive ? 24 : 10, // Active dot is wider
+      width: isActive ? 24 : 10,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: isActive ? AppColors.lighter : AppColors.light,

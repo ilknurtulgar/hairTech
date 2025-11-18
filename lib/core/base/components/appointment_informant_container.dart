@@ -10,11 +10,11 @@ class AppointmentInformantContainer extends StatelessWidget {
   final String time;
 
   const AppointmentInformantContainer({
-    Key? key,
+    super.key,
     required this.date,
     required this.day,
     required this.time,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
