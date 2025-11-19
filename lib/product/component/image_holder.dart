@@ -13,8 +13,8 @@ class ImageHolder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: SizeConfig.responsiveHeight(60),//60,
-      width: SizeConfig.responsiveWidth(40),//40,
+      height: SizeConfig.responsiveHeight(90),//60,
+      width: SizeConfig.responsiveWidth(50),//40,
       decoration: BoxDecoration(
         color: const Color(0xFF90A8C3),
         borderRadius: BorderRadius.circular(12),

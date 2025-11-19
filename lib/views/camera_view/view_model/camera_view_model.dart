@@ -30,13 +30,8 @@ class CameraViewModel extends GetxController {
   late PoseDetectorService poseDetectorService;
 
   // Camera
-  final RxBool _isInitialized = RxBool(false);
-  late CameraController _cameraController;
+  late CameraController cameraController;
   late CameraImage _cameraImage;
-  late CameraDescription cameraDescription;
-
-  bool get isInitialized => _isInitialized.value;
-  CameraController get cameraController => _cameraController;
 
   // Face detector
   late FaceDetectorOptions options;
@@ -79,7 +74,7 @@ class CameraViewModel extends GetxController {
   Rx<double?> rotX = (0.0).obs;
   Rx<double?> rotY = (0.0).obs;
   Rx<double?> rotZ = (0.0).obs;
-  Rx<Rect?> boundingBox = (Rect.fromLTRB(0, 0, 0, 0)).obs;
+  Rx<Rect?> boundingBox = (const Rect.fromLTRB(0, 0, 0, 0)).obs;
 
   RxDouble ratio = 0.0.obs; // Yüz - ekran oranı
   Rx<bool> isInFrame = false.obs;
@@ -103,7 +98,7 @@ class CameraViewModel extends GetxController {
   RxDouble get shoulderDistance => _shoulderDistance;
 
   // Screen size
-  Size _screenSize = Size.zero;
+  final Size _screenSize = Size.zero;
   Size get screenSize => _screenSize;
 
   @override
@@ -160,11 +155,11 @@ class CameraViewModel extends GetxController {
 
   @override
   void dispose() {
-    if (_cameraController.value.isInitialized &&
-        _cameraController.value.isStreamingImages) {
-      _cameraController.stopImageStream();
+    if (cameraController.value.isInitialized &&
+        cameraController.value.isStreamingImages) {
+      cameraController.stopImageStream();
     }
-    _cameraController.dispose();
+    cameraController.dispose();
     faceDetector.close();
     // pose detector close
     // sensor close
@@ -180,10 +175,14 @@ class CameraViewModel extends GetxController {
     lastCommand = "";
 
     // Photos
-    _imageList = RxList.generate(
-      HeadPose.values.length,
-      (_) => Rx<Uint8List?>(null),
+    _imageList.clear();
+    _imageList.addAll(
+      List.generate(
+        HeadPose.values.length,
+        (_) => Rx<Uint8List?>(null),
+      ),
     );
+
     isTaken = List.filled(HeadPose.values.length, false);
 
     if (timer.isActive) timer.cancel();
@@ -272,56 +271,6 @@ class CameraViewModel extends GetxController {
     commandService.currentHeadPose = currentPose;
   }
 
-  Future<void> initCamera(CameraDescription camera) async {
-    _cameraController = CameraController(
-      camera,
-      ResolutionPreset.medium,
-      imageFormatGroup:
-          Platform.isIOS ? ImageFormatGroup.bgra8888 : ImageFormatGroup.nv21,
-    );
-
-    // If the controller is updated then update the UI.
-    _cameraController.addListener(() {
-      if (cameraController.value.hasError) {
-        ShowMessages.showInSnackBar(
-          'Camera error ${cameraController.value.errorDescription}',
-        );
-      }
-    });
-
-    await _cameraController.initialize().then((_) {
-      _isInitialized.value = true;
-      _screenSize = cameraController.value.previewSize ?? Size.zero;
-    }).catchError((Object e) {
-      if (e is CameraException) {
-        switch (e.code) {
-          case 'CameraAccessDenied':
-            ShowMessages.showInSnackBar('You have denied camera access.');
-          case 'CameraAccessDeniedWithoutPrompt':
-            // iOS only
-            ShowMessages.showInSnackBar(
-              'Please go to Settings app to enable camera access.',
-            );
-          case 'CameraAccessRestricted':
-            // iOS only
-            ShowMessages.showInSnackBar('Camera access is restricted.');
-          case 'AudioAccessDenied':
-            ShowMessages.showInSnackBar('You have denied audio access.');
-          case 'AudioAccessDeniedWithoutPrompt':
-            // iOS only
-            ShowMessages.showInSnackBar(
-              'Please go to Settings app to enable audio access.',
-            );
-          case 'AudioAccessRestricted':
-            // iOS only
-            ShowMessages.showInSnackBar('Audio access is restricted.');
-          default:
-            _showCameraException(e);
-        }
-      }
-    });
-  }
-
   Future<void> streamImage(CameraDescription camera, CameraImage image) async {
     if (isProcessing) return;
     isProcessing = true;
@@ -342,9 +291,7 @@ class CameraViewModel extends GetxController {
 
           // CommandService verilerini önce güncelle
           updateCommandService();
-          if (command.value ==
-                  CommandMessage.empty
-              &&
+          if (command.value == CommandMessage.empty &&
               !isTaken[poseIndex] &&
               poseIndex < HeadPose.values.length &&
               !isTakingPicture.value) {
@@ -374,7 +321,8 @@ class CameraViewModel extends GetxController {
                 timer.cancel();
               }
             }
-            await Future.delayed(const Duration(seconds: 3), () { //
+            await Future.delayed(const Duration(seconds: 3), () {
+              //
               isSpeakingInStream.value = false;
             });
           }
@@ -384,11 +332,6 @@ class CameraViewModel extends GetxController {
       }
     }
     isProcessing = false; // yeri değişebilir üst satıra
-  }
-
-  void _showCameraException(CameraException e) {
-    ShowMessages.logError(e.code, e.description);
-    ShowMessages.showInSnackBar('Error: ${e.code}\n${e.description}');
   }
 
   InputImage? _inputImageFromCameraImage(
@@ -439,7 +382,7 @@ class CameraViewModel extends GetxController {
     if (faces.isNotEmpty) {
       final face = faces.first;
       boundingBox.value = face.boundingBox;
-      
+
       isInFrame.value = true;
 
       // Pitch (Sapma)
@@ -461,8 +404,6 @@ class CameraViewModel extends GetxController {
   }
 
   Future<void> capture() async {
-    final CameraController cameraController = _cameraController;
-
     if (!cameraController.value.isInitialized) {
       ShowMessages.showInSnackBar('Error: select a camera first.');
       return;
