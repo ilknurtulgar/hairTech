@@ -78,7 +78,7 @@ class PatientHomeView extends GetView<UserController> {
                   _transformUpdateData(homeController.patientUpdates);
               final nextUploadDate = _getNextUploadDate(homeController.patientUpdates);
              
-              const doctorPhone = "0532 XXX XX XX";
+              const doctorPhone = "0532 382 33 55";
 
               return SingleChildScrollView(
                 child: IntrinsicHeight(
@@ -114,7 +114,7 @@ class PatientHomeView extends GetView<UserController> {
                         data: graphData.isNotEmpty
                             ? graphData
                             : {
-                                "Week 1": {
+                                "1": {
                                   EvaluationType.growth: 0.0,
                                   EvaluationType.density: 0.0,
                                   EvaluationType.naturalness: 0.0,
@@ -134,8 +134,8 @@ class PatientHomeView extends GetView<UserController> {
                               icon: Icons.calendar_today_rounded,
                               text: ConstTexts.nextPhotoUpload +
                                   (nextUploadDate != null ? '' : ' Henüz başlatılmamış'),
-                              date: nextUploadDate,
-                              day: '',
+                              date: '11/12/2025', // Dummy date
+                              day: 'Perşembe',    // Dummy day
                             ),
                           ),
                           SizedBox(width: SizeConfig.responsiveWidth(12)),
@@ -207,8 +207,7 @@ class PatientHomeView extends GetView<UserController> {
                                     ],
                                   );
                                 }
-                         
-                             
+                        
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -255,18 +254,24 @@ class PatientHomeView extends GetView<UserController> {
                             );
                           }
                           return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: updates.map((update) => PatientProcessContainer(
-                              date: DateFormat('dd MMMM yyyy', 'tr_TR').format(update.date.toDate()),
-                              imageUrls: update.imageURLs,
-                              subtitle: update.patientNote,
-                              description: update.doctorNote,
-                              type: ProcessContainerType.patient,
-                            )).toList(),
+                            children: updates
+                                .map((update) => Column(
+                                      children: [
+                                        PatientProcessContainer(
+                                          date: DateFormat('dd/MM/yyyy - EEEE', 'tr_TR').format(update.date.toDate()),
+                                          imageUrls: update.imageURLs,
+                                          subtitle: ConstTexts.doctorNoteTitle,
+                                          description: update.doctorNote,
+                                          type: ProcessContainerType.patient,
+                                        ),
+                                        const SizedBox(height: 5),
+                                      ],
+                                    ))
+                                .toList(),
                           );
                         },
                       ),
-                      const SizedBox(height: 24),
+                     
                     ],
                   ),
                 ),

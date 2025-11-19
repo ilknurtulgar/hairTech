@@ -27,14 +27,14 @@ class InfoCard extends StatelessWidget {
     final width = size == InfoCardSize.big
         ? SizeConfig.responsiveWidth(214)
         : SizeConfig.responsiveWidth(129);
-    final height = SizeConfig.responsiveHeight(81);
+    final height = SizeConfig.responsiveHeight(80);
 
     final content = Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
         color: AppColors.lightgray,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(SizeConfig.responsiveWidth(20)),
       ),
       padding: ResponsePadding.generalContainer(),
       child: Column(
@@ -46,9 +46,9 @@ class InfoCard extends StatelessWidget {
               Icon(
                 icon,
                 color: AppColors.darker,
-                size: SizeConfig.responsiveWidth(20),
+                size: SizeConfig.responsiveWidth(15),
               ),
-              SizedBox(width: SizeConfig.responsiveWidth(8)),
+              SizedBox(width: SizeConfig.responsiveWidth(4)),
               Expanded(
                 child: Text(
                   text,
@@ -60,12 +60,13 @@ class InfoCard extends StatelessWidget {
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
+                  softWrap: true,
                 ),
               ),
             ],
           ),
           if (size == InfoCardSize.big && date != null && day != null) ...[
-            SizedBox(height: SizeConfig.responsiveHeight(5)),
+            SizedBox(height: SizeConfig.responsiveHeight(3)),
             Text(
               '$date, $day',
               style: TextUtility.getStyle(

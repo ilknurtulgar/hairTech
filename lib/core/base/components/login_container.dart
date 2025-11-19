@@ -78,7 +78,7 @@ class LoginContainer extends StatelessWidget {
             errorMessage!,
             style: TextUtility.getStyle(
               color: AppColors.secondary, // Your orange error color
-              fontSize: 14,
+              fontSize: SizeConfig.responsiveWidth(14),
               fontWeight: FontWeight.w600,
             ),
             textAlign: TextAlign.center,

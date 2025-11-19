@@ -18,7 +18,7 @@ class ImageContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dimension = size == ImageContainerSize.big
-        ? SizeConfig.responsiveWidth(106)
+        ? SizeConfig.responsiveWidth(100)
         : SizeConfig.responsiveWidth(60);
 
     return GestureDetector(
@@ -32,10 +32,10 @@ class ImageContainer extends StatelessWidget {
         height: dimension,
         decoration: BoxDecoration(
           color: AppColors.lightgray,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(SizeConfig.responsiveWidth(10)),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(SizeConfig.responsiveWidth(10)),
           child: imageUrl != null && imageUrl!.isNotEmpty
               ? Image.network(
                   imageUrl!,

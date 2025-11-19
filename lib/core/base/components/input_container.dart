@@ -26,8 +26,7 @@ class InputContainer extends StatelessWidget {
       padding: ResponsePadding.generalContainerLarge(),
       decoration: BoxDecoration(
         color: AppColors.lightgray,
-        
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(SizeConfig.responsiveWidth(20)),
       ),
       child: TextField(
         controller: controller,

@@ -46,13 +46,7 @@ class DoctorHomeController extends GetxController {
   }
 
   Future<void> navigateToReviewSubmit(PatientUpdateModel updateModel) async {
-    // 1. Check if the update is still pending review 
-    if (updateModel.doctorNote != 'Doktorunuzdan geri dönüş bekleniyor.') {
-        Get.snackbar('Bilgi', 'Bu paylaşım zaten değerlendirilmiştir.', snackPosition: SnackPosition.BOTTOM);
-        return;
-    }
-
-    // 2. Fetch Patient's UserModel (Name, Age, Register Date)
+  
     final DatabaseService dbService = Get.find<DatabaseService>();
     final UserModel? patient = await dbService.getUserData(updateModel.patientUid);
 
@@ -60,6 +54,7 @@ class DoctorHomeController extends GetxController {
       Get.snackbar('Hata', 'Hasta bilgisi çekilemedi.', snackPosition: SnackPosition.BOTTOM);
       return;
     }
+
 
     // 3. Calculate Age Info (e.g., "24 yaş (3. Ay)")
     final Timestamp registerTimestamp = patient.registerDate; 
@@ -91,16 +86,13 @@ class DoctorHomeController extends GetxController {
     // 5. Navigate and bind the controller
     final String uniqueTag = updateModel.uid; 
 
-    Get.to(
-      () => DoctorReviewSubmitView(initialData: reviewData),
-      binding: BindingsBuilder(
-        () => Get.put(DoctorReviewSubmitController(initialData: reviewData), tag: uniqueTag),
-      ),
-    )?.then((_) {
-        // Cleanup the controller instance after closing the screen
-        Get.delete<DoctorReviewSubmitController>(tag: uniqueTag);
-    });
-  }
+  Get.to(
+    () => DoctorReviewSubmitView(initialData: reviewData),
+    binding: BindingsBuilder(() {
+      Get.put(DoctorReviewSubmitController(initialData: reviewData), tag: uniqueTag);
+    }),
+  );
+}
 
   /// Clear all data (called on logout)
   void clearData() {

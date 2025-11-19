@@ -31,6 +31,7 @@ class _EvaluationDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      
       children: [
         SizedBox(height: SizeConfig.responsiveHeight(20)),
         Row(
@@ -79,7 +80,7 @@ class _EvaluationDisplay extends StatelessWidget {
   }
 }
 
-class DoctorReviewSubmitView extends GetView<DoctorReviewSubmitController> {
+class DoctorReviewSubmitView extends StatelessWidget {
   
   final ReviewSubmissionData initialData;
 
@@ -91,14 +92,12 @@ class DoctorReviewSubmitView extends GetView<DoctorReviewSubmitController> {
   @override
   Widget build(BuildContext context) {
     SizeConfig.init(context);
-    
-    final String uniqueTag = initialData.patientId; 
-    
-    if (!Get.isRegistered<DoctorReviewSubmitController>(tag: uniqueTag)) {
-      Get.put(DoctorReviewSubmitController(initialData: initialData), tag: uniqueTag);
-    }
-    
-    final controller = Get.find<DoctorReviewSubmitController>(tag: uniqueTag);
+    final String uniqueTag = initialData.patientId;
+   // final controller = Get.find<DoctorReviewSubmitController>(tag: uniqueTag);
+     final controller = Get.put(
+      DoctorReviewSubmitController(initialData: initialData),
+      tag: uniqueTag,
+    );
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -106,9 +105,8 @@ class DoctorReviewSubmitView extends GetView<DoctorReviewSubmitController> {
         backgroundColor: AppColors.background,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: AppColors.dark),
+          icon: Icon(Icons.arrow_back_ios, color: AppColors.darker),
           onPressed: () {
-            Get.delete<DoctorReviewSubmitController>(tag: uniqueTag); 
             Get.back();
           },
         ),
@@ -117,164 +115,157 @@ class DoctorReviewSubmitView extends GetView<DoctorReviewSubmitController> {
           style: TextUtility.getStyle(
             fontSize: SizeConfig.responsiveWidth(20),
             fontWeight: FontWeight.bold,
-            color: AppColors.dark,
+            color: AppColors.darker,
           ),
+
         ),
-        centerTitle: true,
+        centerTitle: false,
       ),
-      body: SingleChildScrollView(
-        padding: ResponsePadding.page(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // --- 1. Patient Info Header ---
-            PersonInfoContainer(
-              title: controller.initialData.name,
-              subtitle: controller.initialData.ageInfo,
-              onTap: () {},
-            ),
-
-            SizedBox(height: SizeConfig.responsiveHeight(20)),
-            
-            // --- 2. Image Grid ---
-            SizedBox(
-              height: SizeConfig.responsiveWidth(180),
-              child: GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: controller.initialData.imageUrls.length > 4 ? 4 : controller.initialData.imageUrls.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: SizeConfig.responsiveWidth(10),
-                      mainAxisSpacing: SizeConfig.responsiveHeight(10),
-                      childAspectRatio: 1.0,
-                    ),
-                    itemBuilder: (context, index) {
-                      return ImageContainer(
-                        imageUrl: controller.initialData.imageUrls[index],
-                        size: ImageContainerSize.big,
-                      );
-                    },
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: ResponsePadding.page(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              PersonInfoContainer(
+                title: controller.initialData.name,
+                subtitle: controller.initialData.ageInfo,
+              ),
+        
+              SizedBox(height: SizeConfig.responsiveHeight(20)),
+              
+             Column(
+              children: [
+                if (controller.initialData.imageUrls.isNotEmpty)
+                  Row(
+                    children: controller.initialData.imageUrls
+                        .take(3)
+                        .map((url) => Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.all(SizeConfig.responsiveWidth(2)),
+                                child: ImageContainer(
+                                  imageUrl: url,
+                                  size: ImageContainerSize.big,
+                                ),
+                              ),
+                            ))
+                        .toList(),
                   ),
+                SizedBox(height: SizeConfig.responsiveHeight(5)),
+        
+                if (controller.initialData.imageUrls.length > 3)
+                  Row(
+                    children: [
+                      ...controller.initialData.imageUrls
+                          .skip(3)
+                          .take(2)
+                          .map((url) => Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.all(SizeConfig.responsiveWidth(2)),
+                                  child: ImageContainer(
+                                    imageUrl: url,
+                                    size: ImageContainerSize.big,
+                                  ),
+                                ),
+                              )),
+                    
+                      if (controller.initialData.imageUrls.length == 5) Expanded(child: SizedBox()),
+                      if (controller.initialData.imageUrls.length == 4)
+                        Expanded(child: SizedBox()),
+                    ],
+                  ),
+              ],
             ),
-
-            SizedBox(height: SizeConfig.responsiveHeight(30)),
-
-            // --- 3. Hastanın Notu (Patient's Note) ---
-            Text(
-              'Hastanın Notu',
-              style: TextUtility.getStyle(
-                fontSize: SizeConfig.responsiveWidth(20),
-                fontWeight: FontWeight.w700,
-                color: AppColors.dark,
+              SizedBox(height: SizeConfig.responsiveHeight(15)),
+              Text(
+                'Hastanın Notu',
+                style: TextUtility.getStyle(
+                  fontSize: SizeConfig.responsiveWidth(18),
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.darker,
+                ),
               ),
-            ),
-            SizedBox(height: SizeConfig.responsiveHeight(10)),
-            Text(
-              controller.initialData.patientNote,
-              style: TextUtility.getStyle(
-                fontSize: SizeConfig.responsiveWidth(14),
-                fontWeight: FontWeight.w400,
-                color: AppColors.dark,
+              SizedBox(height: SizeConfig.responsiveHeight(10)),
+              Text(
+                controller.initialData.patientNote,
+                style: TextUtility.getStyle(
+                  fontSize: SizeConfig.responsiveWidth(16),
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.darker,
+                ),
+                maxLines: 4,
+                overflow: TextOverflow.ellipsis,
               ),
-              maxLines: 4,
-              overflow: TextOverflow.ellipsis,
-            ),
-            
-            // ⭐️ 4. Patient Self-Evaluation (Read-Only) ⭐️
-            Obx(() => _EvaluationDisplay(
-                label: 'Uzama',
-                value: controller.patientGrowthRating.value,
-                max: 5.0,
-            )),
-            Obx(() => _EvaluationDisplay(
-                label: 'Yoğunluk',
-                value: controller.patientDensityRating.value,
-                max: 5.0,
-            )),
-
-            SizedBox(height: SizeConfig.responsiveHeight(20)),
-            
-            // --- 5. Doctor's Review Sliders (Editable) ---
-            Text(
-              'Geribildirim Ekle',
-              style: TextUtility.getStyle(
-                fontSize: SizeConfig.responsiveWidth(24),
-                fontWeight: FontWeight.w700,
-                color: AppColors.dark,
+              
+              // ⭐️ Editable Sliders using EvaluationBar ⭐️
+              Obx(() => EvaluationBar(
+                title: 'Uzama',
+                initialValue: controller.growthRating.value,
+                onValueChanged: controller.updateGrowthRating,
+              )),
+              Obx(() => EvaluationBar(
+                title: 'Yoğunluk',
+                initialValue: controller.densityRating.value,
+                onValueChanged: controller.updateDensityRating,
+              )),
+              Obx(() => EvaluationBar(
+                title: 'Doğallık',
+                initialValue: controller.naturalnessRating.value,
+                onValueChanged: controller.updateNaturalnessRating,
+              )),
+              Obx(() => EvaluationBar(
+                title: 'Sağlık',
+                initialValue: controller.healthRating.value,
+                onValueChanged: controller.updateHealthRating,
+              )),
+        
+              SizedBox(height: SizeConfig.responsiveHeight(15)),
+        
+              Text(
+                'Açıklama',
+                style: TextUtility.getStyle(
+                  fontSize: SizeConfig.responsiveWidth(18),
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.darker,
+                ),
               ),
-            ),
-            
-            // ⭐️ Editable Sliders using EvaluationBar ⭐️
-            Obx(() => EvaluationBar(
-              title: 'Uzama',
-              initialValue: controller.growthRating.value,
-              onValueChanged: controller.updateGrowthRating,
-            )),
-            Obx(() => EvaluationBar(
-              title: 'Yoğunluk',
-              initialValue: controller.densityRating.value,
-              onValueChanged: controller.updateDensityRating,
-            )),
-            Obx(() => EvaluationBar(
-              title: 'Doğallık',
-              initialValue: controller.naturalnessRating.value,
-              onValueChanged: controller.updateNaturalnessRating,
-            )),
-            Obx(() => EvaluationBar(
-              title: 'Sağlık',
-              initialValue: controller.healthRating.value,
-              onValueChanged: controller.updateHealthRating,
-            )),
-
-            SizedBox(height: SizeConfig.responsiveHeight(30)),
-
-            // --- 6. Açıklama (Doctor's Description/Feedback) ---
-            Text(
-              'Açıklama',
-              style: TextUtility.getStyle(
-                fontSize: SizeConfig.responsiveWidth(20),
-                fontWeight: FontWeight.w700,
-                color: AppColors.dark,
-              ),
-            ),
-            SizedBox(height: SizeConfig.responsiveHeight(10)),
-            Container(
-              height: SizeConfig.responsiveHeight(150),
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: AppColors.lightgray, width: 1),
-              ),
-              child: TextField(
-                onChanged: controller.onFeedbackChanged,
-                maxLines: null,
-                expands: true,
-                textAlignVertical: TextAlignVertical.top,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  contentPadding: ResponsePadding.page(),
-                  hintText: 'Doktorun geribildirimini buraya yazın...',
-                  hintStyle: TextUtility.getStyle(
-                    fontSize: SizeConfig.responsiveWidth(14),
-                    color: AppColors.darkgray,
+              SizedBox(height: SizeConfig.responsiveHeight(10)),
+              Container(
+                height: SizeConfig.responsiveHeight(150),
+                decoration: BoxDecoration(
+                  color: AppColors.lightgray,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: AppColors.lightgray, width: 1),
+                ),
+                child: TextField(
+                  onChanged: controller.onFeedbackChanged,
+                  maxLines: null,
+                  expands: true,
+                  textAlignVertical: TextAlignVertical.top,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: ResponsePadding.page(),
+                    hintText: 'Doktorun geribildirimini buraya yazın...',
+                    hintStyle: TextUtility.getStyle(
+                      fontSize: SizeConfig.responsiveWidth(14),
+                      color: AppColors.darkgray,
+                    ),
                   ),
                 ),
               ),
-            ),
-            
-            SizedBox(height: SizeConfig.responsiveHeight(30)),
-
-            // --- 7. Gönder (Submit) Button ---
-            Button(
-              text: 'Gönder',
-              onTap: controller.submitReview,
-              backgroundColor: AppColors.secondary,
-              textColor: AppColors.white,
-              buttonHeight: SizeConfig.responsiveHeight(50),
-            ),
-            SizedBox(height: SizeConfig.responsiveHeight(40)),
-          ],
+              
+              SizedBox(height: SizeConfig.responsiveHeight(15)),
+        
+              Button(
+                text: 'Gönder',
+                onTap: controller.submitReview,
+                backgroundColor: AppColors.secondary,
+                textColor: AppColors.white,
+                buttonHeight: SizeConfig.responsiveHeight(50),
+              ),
+              SizedBox(height: SizeConfig.responsiveHeight(15)),
+            ],
+          ),
         ),
       ),
     );
