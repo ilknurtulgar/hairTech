@@ -76,7 +76,7 @@ class PatientProcessView extends StatelessWidget {
         final safeScores = update.scores.length >= 5 ? update.scores : List.filled(5, 0);
 
         return Padding(
-          padding: const EdgeInsets.only(bottom: 10),
+          padding: EdgeInsets.only(bottom: SizeConfig.responsiveHeight(10)),
           child: PatientProcessContainer(
             date: formatter.format(update.date.toDate()),
             imageUrls: update.imageURLs.cast<String?>(), // Cast to List<String?>

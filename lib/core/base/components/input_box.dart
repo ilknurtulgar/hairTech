@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../util/app_colors.dart';
 import '../util/text_utility.dart';
+import '../util/size_config.dart';
 
 class InputBox extends StatelessWidget {
   final String placeholderText;
@@ -38,21 +39,21 @@ class InputBox extends StatelessWidget {
       hintStyle: TextUtility.getStyle(
         color: AppColors.darkgray,
         fontWeight: FontWeight.w600,
-        fontSize: 16,
+        fontSize: SizeConfig.responsiveWidth(16),
       ),
       filled: true,
       fillColor: AppColors.lightgray,
-      contentPadding: const EdgeInsets.symmetric(vertical: 18),
+      contentPadding: EdgeInsets.symmetric(vertical: SizeConfig.responsiveHeight(18)),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(40),
+        borderRadius: BorderRadius.circular(SizeConfig.responsiveWidth(40)),
         borderSide: BorderSide.none,
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(40),
+        borderRadius: BorderRadius.circular(SizeConfig.responsiveWidth(40)),
         borderSide: BorderSide.none,
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(40),
+        borderRadius: BorderRadius.circular(SizeConfig.responsiveWidth(40)),
         borderSide: const BorderSide(color: AppColors.primary, width: 2),
       ),
     );

@@ -32,10 +32,10 @@ class ImageContainer extends StatelessWidget {
         height: dimension,
         decoration: BoxDecoration(
           color: AppColors.lightgray,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(SizeConfig.responsiveWidth(10)),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(SizeConfig.responsiveWidth(10)),
           child: imageUrl != null && imageUrl!.isNotEmpty
               ? Image.network(
                   imageUrl!,

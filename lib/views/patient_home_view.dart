@@ -114,7 +114,7 @@ class PatientHomeView extends GetView<UserController> {
                         data: graphData.isNotEmpty
                             ? graphData
                             : {
-                                "Week 1": {
+                                "1": {
                                   EvaluationType.growth: 0.0,
                                   EvaluationType.density: 0.0,
                                   EvaluationType.naturalness: 0.0,

@@ -51,7 +51,7 @@ class _DoctorAppointmentsViewState extends State<DoctorAppointmentsView> {
                 fontWeight: FontWeight.w800,
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: SizeConfig.responsiveHeight(16)),
             if (uniqueSortedDates.isNotEmpty)
               DateTabBar(
                 size: DateTabBarSize.big,
@@ -67,7 +67,7 @@ class _DoctorAppointmentsViewState extends State<DoctorAppointmentsView> {
                   });
                 },
               ),
-            const SizedBox(height: 16),
+            SizedBox(height: SizeConfig.responsiveHeight(16)),
             if (uniqueSortedDates.isNotEmpty && userController.user != null && selectedDateIndex < uniqueSortedDates.length)
               Expanded(
                 child: _AppointmentsForDate(
@@ -104,7 +104,7 @@ class _AppointmentsForDate extends StatelessWidget {
         }
         return ListView.separated(
           itemCount: appointments.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 12),
+          separatorBuilder: (_, __) => SizedBox(height: SizeConfig.responsiveHeight(12)),
           itemBuilder: (context, index) {
             final appointment = appointments[index];
             return FutureBuilder<UserModel?>(

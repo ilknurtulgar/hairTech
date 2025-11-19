@@ -5,6 +5,7 @@ import 'package:hairtech/core/base/util/icon_utility.dart';
 import 'package:hairtech/core/base/util/text_utility.dart';
 import 'package:hairtech/core/base/util/padding_util.dart';
 import 'package:hairtech/model/user_model.dart';
+import 'package:hairtech/core/base/util/size_config.dart';
 
 class DoctorPatientDetailView extends StatefulWidget {
   final UserModel patient;
@@ -36,7 +37,7 @@ class _DoctorPatientDetailViewState extends State<DoctorPatientDetailView> {
             style: TextUtility.getStyle(
               color: AppColors.darker,
               fontWeight: FontWeight.w700,
-              fontSize: 20,
+              fontSize: SizeConfig.responsiveWidth(20),
             ),
           ),
         ),
@@ -49,9 +50,9 @@ class _DoctorPatientDetailViewState extends State<DoctorPatientDetailView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Ad: ${patient.name}', style: TextUtility.getStyle(fontSize: 18)),
-                Text('Soyad: ${patient.surname}', style: TextUtility.getStyle(fontSize: 18)),
-                Text('Email: ${patient.email}', style: TextUtility.getStyle(fontSize: 16)),
+                Text('Ad: ${patient.name}', style: TextUtility.getStyle(fontSize: SizeConfig.responsiveWidth(18))),
+                Text('Soyad: ${patient.surname}', style: TextUtility.getStyle(fontSize: SizeConfig.responsiveWidth(18))),
+                Text('Email: ${patient.email}', style: TextUtility.getStyle(fontSize: SizeConfig.responsiveWidth(16))),
                 // Buraya istersen hasta detaylarını ekleyebilirsin
               ],
             ),

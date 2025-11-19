@@ -52,7 +52,7 @@ class _QuestionContainerState extends State<QuestionContainer> {
       padding: EdgeInsets.all(SizeConfig.responsiveWidth(16)),
       decoration: BoxDecoration(
         color: AppColors.lightgray,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(SizeConfig.responsiveWidth(20)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

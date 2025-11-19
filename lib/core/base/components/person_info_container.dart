@@ -29,7 +29,7 @@ class PersonInfoContainer extends StatelessWidget {
       height: SizeConfig.responsiveHeight(80),
       decoration: BoxDecoration(
         color: AppColors.lightgray,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(SizeConfig.responsiveWidth(20)),
         border: Border.all(
           color: borderColor ?? (isSelected ? AppColors.secondary : Colors.transparent),
           width: 2,

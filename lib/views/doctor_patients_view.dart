@@ -38,7 +38,7 @@ class _DoctorPatientsViewState extends State<DoctorPatientsView> {
                 fontWeight: FontWeight.w800,
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: SizeConfig.responsiveHeight(16)),
             if (doctorUid != null && doctorUid.isNotEmpty)
               Expanded(
                 child: StreamBuilder<List<AppointmentModel>>(
@@ -57,7 +57,7 @@ class _DoctorPatientsViewState extends State<DoctorPatientsView> {
                     }
                     return ListView.separated(
                       itemCount: patientUids.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 12),
+                      separatorBuilder: (_, __) => SizedBox(height: SizeConfig.responsiveHeight(12)),
                       itemBuilder: (context, index) {
                         final patientUid = patientUids[index];
                         return FutureBuilder<UserModel?>(
@@ -73,9 +73,9 @@ class _DoctorPatientsViewState extends State<DoctorPatientsView> {
                             return PersonInfoContainer(
                               title: '${user.name} ${user.surname}',
                               subtitle: user.email,
-                              showArrow: true,
+                              showArrow: false,
                               onTap: () {
-                                Get.to(() => DoctorPatientDetailView(patient: user,));
+                              //  Get.to(() => DoctorPatientDetailView(patient: user,));
                               },
                             );
                           },

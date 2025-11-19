@@ -19,7 +19,7 @@ class ResultInformationContainer extends StatelessWidget {
       height: SizeConfig.responsiveHeight(244),
       decoration: BoxDecoration(
         color: AppColors.lightgray,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(SizeConfig.responsiveWidth(20)),
       ),
       padding: ResponsePadding.generalContainer(),
       child: SingleChildScrollView(

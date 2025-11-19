@@ -8,6 +8,7 @@ import '../core/base/util/icon_utility.dart';
 import '../core/base/service/auth_service.dart';
 import '../core/base/service/database_service.dart';
 import '../core/base/util/img_utility.dart';
+import '../core/base/util/size_config.dart';
 
 class DoctorLoginView extends StatelessWidget {
   const DoctorLoginView({super.key});
@@ -102,26 +103,31 @@ class DoctorLoginView extends StatelessWidget {
           ),
         ),
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                ImageUtility.logo,
-                height: 80,
-              ),
-              const SizedBox(height: 32),
-              Obx(() => LoginContainer(
-                    headerText: ConstTexts.doctorLoginHeader,
-                    emailController: emailController,
-                    passwordController: passwordController,
-                    isLoading: isLoading.value,
-                    errorMessage: errorMessage.value,
-                    onLoginTap: handleLogin,
-                  )),
-            ],
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: SizeConfig.responsiveWidth(32),
+              vertical: SizeConfig.responsiveHeight(24),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  ImageUtility.logo,
+                  height: SizeConfig.responsiveHeight(80),
+                ),
+                SizedBox(height: SizeConfig.responsiveHeight(32)),
+                Obx(() => LoginContainer(
+                      headerText: ConstTexts.doctorLoginHeader,
+                      emailController: emailController,
+                      passwordController: passwordController,
+                      isLoading: isLoading.value,
+                      errorMessage: errorMessage.value,
+                      onLoginTap: handleLogin,
+                    )),
+              ],
+            ),
           ),
         ),
       ),

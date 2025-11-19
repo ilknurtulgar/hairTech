@@ -207,8 +207,8 @@ class _DoctorHomeViewState extends State<DoctorHomeView> {
                 return Column(
                   children: doctorHomeController.pendingUpdates
                       .where((update) => update.doctorNote.isEmpty)
-                      .map((update) => Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
+                          .map((update) => Padding(
+                            padding: EdgeInsets.only(bottom: SizeConfig.responsiveHeight(10)),
                             child: PatientProcessContainer(
                               date: DateFormat('dd/MM/yyyy - EEEE', 'tr_TR').format(update.date.toDate()),
                               imageUrls: update.imageURLs,

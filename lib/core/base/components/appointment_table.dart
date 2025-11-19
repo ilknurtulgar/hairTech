@@ -84,7 +84,7 @@ class _AppointmentTableState extends State<AppointmentTable> {
                       height: SizeConfig.responsiveHeight(40),
                       decoration: BoxDecoration(
                         color: isSelected ? AppColors.secondary : AppColors.lightgray,
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(SizeConfig.responsiveWidth(20)),
                       ),
                       padding: EdgeInsets.symmetric(
                         horizontal: SizeConfig.responsiveWidth(8),
