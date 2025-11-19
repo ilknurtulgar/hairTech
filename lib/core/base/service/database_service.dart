@@ -166,7 +166,7 @@ class DatabaseService {
         'patientNote': patientNote,
         'imageURLs': imageURLs,
         'date': FieldValue.serverTimestamp(),
-        'doctorNote': 'Doktorunuzdan geri dönüş bekleniyor.',
+        'doctorNote': '',
         'scores': [0, 0, 0, 0, 0], 
       });
     } catch (e) {

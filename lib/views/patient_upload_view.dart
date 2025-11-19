@@ -11,10 +11,16 @@ import 'package:hairtech/core/base/util/const_texts.dart';
 import 'package:hairtech/core/base/util/icon_utility.dart';
 import 'package:hairtech/core/base/util/padding_util.dart';
 import 'package:hairtech/core/base/util/text_utility.dart';
+import 'package:hairtech/views/main_navigation_view.dart';
+import 'package:hairtech/views/patient_home_view.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../product/component/image_holder.dart';
+import '../product/enum/head_pose.dart';
+
 class PatientUploadView extends StatelessWidget {
-  const PatientUploadView({super.key});
+  List<Rx<Uint8List>> photoList;
+  PatientUploadView({super.key, required this.photoList});
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +46,7 @@ class PatientUploadView extends StatelessWidget {
       final user = userController.user;
       if (user == null) return;
 
-      if (selectedImages.length != 5) {
+      if (photoList.length != 5) {
         errorMessage.value = ConstTexts.errorMinPhotos;
         return;
       }
@@ -49,13 +55,22 @@ class PatientUploadView extends StatelessWidget {
       errorMessage.value = null;
 
       try {
+        // Rx<Uint8List?> → Uint8List listesi
+        List<Uint8List> _photoList =
+            photoList.map((rxBytes) => rxBytes.value!).toList();
+
+        // Firebase upload
         final List<String> imageURLs =
-            await storageService.uploadImages(user.uid, selectedImages.value);
+            await storageService.uploadUint8Images(
+          user.uid,
+          _photoList,
+        );
 
         if (imageURLs.isEmpty) {
           throw Exception("Görseller yüklenemedi.");
         }
 
+        // Database kaydı
         await databaseService.addPatientUpdate(
           patientUid: user.uid,
           patientNote: noteController.text.trim(),
@@ -63,10 +78,12 @@ class PatientUploadView extends StatelessWidget {
         );
 
         print(ConstTexts.successUpload);
-        Get.back();
+        Get.to(() => const MainNavigationView()); // sayfa kapat
       } catch (e) {
-        isLoading.value = false;
         errorMessage.value = e.toString();
+        print("Hata: $e");
+      } finally {
+        isLoading.value = false; // her durumda loading kapansın
       }
     }
 
@@ -94,14 +111,16 @@ class PatientUploadView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            /*
             Button(
               text: ConstTexts.uploadButton,
               onTap: pickImages,
               backgroundColor: AppColors.primary,
               textColor: AppColors.white,
-            ),
+            ), */
             const SizedBox(height: 16),
-            Obx(() => _buildImageGrid(selectedImages.value)),
+            //Obx(() => _buildImageGrid(selectedImages.value)),
+            _photoListView(),
             const SizedBox(height: 24),
             _buildNoteInput(noteController),
             const SizedBox(height: 24),
@@ -132,6 +151,23 @@ class PatientUploadView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _photoListView() {
+    return Obx(() {
+      return Row(
+        children: List.generate(photoList.length, (index) {
+          final img = photoList[index];
+          return Padding(
+            padding: const EdgeInsets.only(right: 5),
+            child: ImageHolder(
+              image: img.value,
+              headPose: HeadPose.values[index],
+            ),
+          );
+        }),
+      );
+    });
   }
 
   Widget _buildNoteInput(TextEditingController controller) {
