@@ -4,6 +4,7 @@ import 'package:hairtech/core/base/components/custom_bottomtabbar.dart';
 import 'package:hairtech/core/base/controllers/user_controller.dart';
 import 'package:hairtech/core/base/controllers/patient_home_controller.dart';
 import 'package:hairtech/core/base/util/app_colors.dart';
+import 'package:hairtech/views/camera_view/view/camera_view.dart';
 import 'package:hairtech/views/doctor_appointments_view.dart' show DoctorAppointmentsView;
 import 'package:hairtech/views/doctor_home_view.dart' show DoctorHomeView;
 import 'package:hairtech/views/doctor_patients_view.dart';
@@ -59,7 +60,7 @@ class _MainNavigationViewState extends State<MainNavigationView> {
   void _onItemTapped(int barIndex) {
     if (!_isDoctor && barIndex == 1) {
       // 📸 HASTA İÇİN: Index 1 (Kamera) tıklandığında
-      Get.to(() => const PatientUploadView());
+      Get.to(() => CameraView()/*const PatientUploadView()*/); // Kamera sayfası
       return; // Sayfa index'i değişmez
     }
     

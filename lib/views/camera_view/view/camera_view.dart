@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,54 +9,116 @@ import '../../../core/base/util/size_config.dart';
 import '../../../core/base/view/base_view.dart';
 import '../../../product/component/camera_viewer.dart';
 import '../../../product/component/image_holder.dart';
+import '../../../product/service/camera_service.dart';
 
 class CameraView extends StatelessWidget {
-  final CameraDescription camera;
-  const CameraView({super.key, required this.camera});
+  CameraView({super.key});
+
+  CameraService cameraService = CameraService();
 
   @override
   Widget build(BuildContext context) {
-    return BaseView<CameraViewModel>(
-      controller: CameraViewModel(),
-      onModelReady: (controller) async {
-        await controller.initCamera(camera);
-        controller.cameraDescription = camera;
-        await controller.speechService.initTts();
-      },
-      buildPage: (context, controller) {
-        return Obx(
-          () => !controller.isInitialized
-              ? const Center(child: CircularProgressIndicator())
-              : Scaffold(
-                  backgroundColor: const Color(0xFF0B1E33),
-                  body: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: SizeConfig.responsiveWidth(300), //300,
-                          height: SizeConfig.responsiveHeight(400), //400,
-                          child: Stack(
-                            children: [
-                              CustomCameraPreview(
-                                cameraController: controller.cameraController,
+    return FutureBuilder(
+      future: cameraService.initCamera(),
+      builder: (context, snapshot) {
+        /// 1) Loading
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        }
+
+        /// 2) Future error verdiyse
+        if (snapshot.hasError) {
+          return Scaffold(
+            body: Center(
+              child: Text(
+                "Camera error: ${snapshot.error}",
+                style: const TextStyle(fontSize: 16),
+              ),
+            ),
+          );
+        }
+
+        /// 3) Data hiç gelmediyse
+        if (snapshot.data == null) {
+          return const Scaffold(
+            body: Center(child: Text("Camera initialization returned null")),
+          );
+        }
+
+        /// 4) Data map ise ama içindeki elemanlar eksikse
+        final data = snapshot.data as Map;
+
+        final CameraDescription? camera = data['camera'] as CameraDescription?;
+
+        final CameraController? cameraController =
+            data['controller'] as CameraController?;
+
+        /// 5) Kamera bulunamadıysa
+        if (camera == null) {
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                "Front camera not available",
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+          );
+        }
+
+        /// 6) Camera controller oluşmadıysa
+        if (cameraController == null) {
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                "Camera controller could not be initialized",
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+          );
+        }
+
+        /// 7) Her şey yolunda → sayfaya devam et
+        return BaseView<CameraViewModel>(
+          controller: CameraViewModel(),
+          onModelReady: (controller) async {
+            controller.cameraController = cameraController;
+            await controller.speechService.initTts();
+          },
+          buildPage: (context, controller) {
+            return Scaffold(
+                      backgroundColor: const Color(0xFF0B1E33),
+                      body: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: SizeConfig.responsiveWidth(350), //300,
+                              height: SizeConfig.responsiveHeight(500),//400,
+                              child: Stack(
+                                children: [
+                                  CustomCameraPreview(
+                                    cameraController: cameraController,
+                                  ),
+                                  Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: images(controller)
+                                  ),
+                                ],
                               ),
-                              images(controller),
-                            ],
-                          ),
+                            ),
+                            button(controller,camera),
+                          ],
                         ),
-                        button(controller),
-                      ],
-                    ),
-                  ),
-                ),
+                      ),
+            );
+          },
         );
       },
     );
   }
 
-  InkWell button(CameraViewModel controller) {
+  InkWell button(CameraViewModel controller, CameraDescription camera) {
     return InkWell(
       onTap: () {
         if (!controller.isStreaming) {
@@ -65,15 +129,14 @@ class CameraView extends StatelessWidget {
             await controller.streamImage(camera, image);
           });
         } else {
-          // Fotoğraf çekimini baştan başlatma
           controller.tryAgain();
         }
       },
       child: Padding(
         padding: const EdgeInsets.only(top: 20),
         child: Container(
-          height: SizeConfig.responsiveHeight(75), // 75,
-          width: SizeConfig.responsiveHeight(75), // 75
+          height: SizeConfig.responsiveHeight(75), //75,
+          width: SizeConfig.responsiveHeight(75), //75,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
@@ -97,8 +160,8 @@ class CameraView extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(10),
         child: Container(
-          height: SizeConfig.responsiveHeight(70), //70,
-          width: SizeConfig.responsiveWidth(310), //310,
+          height: SizeConfig.responsiveHeight(100),//70,
+          width: SizeConfig.responsiveWidth(360), //310,
           decoration: BoxDecoration(
             color: const Color(0xFF90A8C3),
             borderRadius: BorderRadius.circular(12),
@@ -116,7 +179,6 @@ class CameraView extends StatelessWidget {
               return Row(
                 children: List.generate(controller.imageList.length, (index) {
                   final img = controller.imageList[index];
-
                   return Padding(
                     padding: const EdgeInsets.only(right: 5),
                     child: ImageHolder(
