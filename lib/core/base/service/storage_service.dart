@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/foundation.dart'; // <-- 1. Import kIsWeb
@@ -52,4 +53,39 @@ class StorageService {
       throw Exception("Görsel yükleme hatası: $e");
     }
   }
+
+
+Future<List<String>> uploadUint8Images(
+  String patientUid,
+  List<Uint8List> images,
+) async {
+  try {
+    List<String> downloadUrls = [];
+
+    await Future.wait(images.map((bytes) async {
+      final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+      final ref = _storage
+          .ref()
+          .child('patient_updates')
+          .child(patientUid)
+          .child(fileName);
+
+      final snapshot = await ref.putData(
+        bytes,
+        SettableMetadata(contentType: "image/jpeg"),
+      );
+
+      downloadUrls.add(await snapshot.ref.getDownloadURL());
+    }));
+
+    return downloadUrls;
+  } catch (e) {
+    print("Error uploading Uint8List images: $e");
+    throw Exception("Görsel yükleme hatası: $e");
+  }
+}
+
+
+
 }

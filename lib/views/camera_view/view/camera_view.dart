@@ -1,9 +1,12 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:typed_data';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hairtech/views/camera_view/view_model/camera_view_model.dart';
+import 'package:hairtech/views/patient_upload_view.dart';
 
 import '../../../core/base/util/size_config.dart';
 import '../../../core/base/view/base_view.dart';
@@ -23,7 +26,8 @@ class CameraView extends StatelessWidget {
       builder: (context, snapshot) {
         /// 1) Loading
         if (snapshot.connectionState != ConnectionState.done) {
-          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+          return const Scaffold(
+              body: Center(child: CircularProgressIndicator()));
         }
 
         /// 2) Future error verdiyse
@@ -86,35 +90,108 @@ class CameraView extends StatelessWidget {
           },
           buildPage: (context, controller) {
             return Scaffold(
-                      backgroundColor: const Color(0xFF0B1E33),
-                      body: Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: SizeConfig.responsiveWidth(350), //300,
-                              height: SizeConfig.responsiveHeight(500),//400,
-                              child: Stack(
-                                children: [
-                                  CustomCameraPreview(
-                                    cameraController: cameraController,
-                                  ),
-                                  Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: images(controller)
-                                  ),
-                                ],
-                              ),
-                            ),
-                            button(controller,camera),
-                          ],
+              backgroundColor: const Color(0xFF0B1E33),
+              body: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  backButton(),
+                  logoImage(),
+                  SizedBox(
+                    width: SizeConfig.responsiveWidth(350), //300,
+                    height: SizeConfig.responsiveHeight(500), //400,
+                    child: Stack(
+                      children: [
+                        CustomCameraPreview(
+                          cameraController: cameraController,
                         ),
-                      ),
+                        Align(
+                            alignment: Alignment.bottomCenter,
+                            child: images(controller)),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        button(controller, camera),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        nextPageButton(controller),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             );
           },
         );
       },
+    );
+  }
+
+  Widget backButton() {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(top:10, left: 15),
+        child: InkWell(
+                          onTap: () => Get.back(),
+                          child: const Icon(
+                            Icons.keyboard_arrow_left,
+                            color: Colors.white,
+                          )),
+      ),
+    );
+  }
+
+  Padding logoImage() {
+    return Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: Image.asset(
+          "assets/images/logo.png",
+          height: SizeConfig.responsiveHeight(100),
+          width: SizeConfig.responsiveHeight(100),
+        ));
+  }
+
+  InkWell nextPageButton(CameraViewModel controller) {
+    return InkWell(
+      onTap: () {
+        if (controller.imageList.every((rx) => rx.value != null)) {
+          List<Rx<Uint8List>> images = controller.imageList
+              .map((rx) => Rx<Uint8List>(rx.value!))
+              .toList();
+          Get.to(PatientUploadView(photoList: images));
+        } else {
+          if (!(controller.speechService.isPlaying.value)) {
+            controller.speechService.speak(
+                "Fotoğraf çekimlerini tamamlamadan sonraki sayfaya geçemezsiniz!");
+          }
+        }
+      },
+      child: Container(
+        height: SizeConfig.responsiveHeight(75),
+        width: SizeConfig.responsiveWidth(150),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFF90A8C3), width: 4),
+        ),
+        child: const Center(
+            child: Text(
+          "Sonraki sayfa",
+          style: TextStyle(
+              color: Color(0xFF90A8C3),
+              fontSize: 16,
+              fontWeight: FontWeight.w700),
+        )),
+      ),
     );
   }
 
@@ -132,22 +209,19 @@ class CameraView extends StatelessWidget {
           controller.tryAgain();
         }
       },
-      child: Padding(
-        padding: const EdgeInsets.only(top: 20),
-        child: Container(
-          height: SizeConfig.responsiveHeight(75), //75,
-          width: SizeConfig.responsiveHeight(75), //75,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFF90A8C3), width: 4),
-          ),
-          child: const Center(
-            child: Icon(
-              Icons.photo_camera_outlined,
-              color: Color(0xFF90A8C3),
-              size: 40,
-            ),
+      child: Container(
+        height: SizeConfig.responsiveHeight(75), //75,
+        width: SizeConfig.responsiveHeight(75), //75,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFF90A8C3), width: 4),
+        ),
+        child: const Center(
+          child: Icon(
+            Icons.photo_camera_outlined,
+            color: Color(0xFF90A8C3),
+            size: 40,
           ),
         ),
       ),
@@ -160,7 +234,7 @@ class CameraView extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(10),
         child: Container(
-          height: SizeConfig.responsiveHeight(100),//70,
+          height: SizeConfig.responsiveHeight(100), //70,
           width: SizeConfig.responsiveWidth(360), //310,
           decoration: BoxDecoration(
             color: const Color(0xFF90A8C3),
