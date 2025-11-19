@@ -27,7 +27,7 @@ class InfoCard extends StatelessWidget {
     final width = size == InfoCardSize.big
         ? SizeConfig.responsiveWidth(214)
         : SizeConfig.responsiveWidth(129);
-    final height = SizeConfig.responsiveHeight(80);
+    final height = SizeConfig.responsiveHeight(85);
 
     final content = Container(
       width: width,
