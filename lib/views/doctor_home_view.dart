@@ -12,6 +12,8 @@ import 'package:hairtech/core/base/util/size_config.dart';
 import 'package:hairtech/core/base/util/text_utility.dart';
 import 'package:hairtech/core/base/util/padding_util.dart';
 import 'package:hairtech/core/base/components/new_scheduled_appointments.dart';
+import 'package:hairtech/model/review_submission_data.dart';
+import 'package:hairtech/views/doctor_review_submit_view.dart';
 import 'package:intl/intl.dart';
 import 'package:hairtech/model/user_model.dart';
 import 'package:hairtech/core/base/service/database_service.dart';
@@ -201,44 +203,25 @@ class _DoctorHomeViewState extends State<DoctorHomeView> {
                     ),
                   );
                 }
+                // Geri bildirim paylaşım listesi
                 return Column(
-                  children: List.generate(
-                    doctorHomeController.pendingUpdates.length,
-                    (index) {
-                      final update = doctorHomeController.pendingUpdates[index];
-                      final dateFormat = DateFormat('d MMMM yyyy', 'tr_TR');
-                      final date = update.date.toDate();
-                      return Padding(
-                        padding: EdgeInsets.only(bottom: SizeConfig.responsiveHeight(12)),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            PatientProcessContainer(
-                              date: dateFormat.format(date),
+                  children: doctorHomeController.pendingUpdates
+                      .where((update) => update.doctorNote.isEmpty)
+                      .map((update) => Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: PatientProcessContainer(
+                              date: DateFormat('dd/MM/yyyy - EEEE', 'tr_TR').format(update.date.toDate()),
                               imageUrls: update.imageURLs,
-                              subtitle: "Hasta Notu",
+                              subtitle: ConstTexts.patientNoteTitle,
                               description: update.patientNote,
                               type: ProcessContainerType.patient,
                               onTap: () {
+                                
                                 doctorHomeController.navigateToReviewSubmit(update);
                               },
                             ),
-                            if (update.doctorNote != "" && update.doctorNote != "Doktorunuzdan geri dönüş bekleniyor.")
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: PatientProcessContainer(
-                                  date: dateFormat.format(date),
-                                  imageUrls: update.imageURLs,
-                                  subtitle: "Doktor Notu",
-                                  description: update.doctorNote,
-                                  type: ProcessContainerType.doctor,
-                                ),
-                              ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                          ))
+                      .toList(),
                 );
               }),
             ],

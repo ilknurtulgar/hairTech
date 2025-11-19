@@ -44,15 +44,17 @@ class PatientProcessContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final containerHeight = type == ProcessContainerType.doctor
-        ? SizeConfig.responsiveHeight(358)
-        : SizeConfig.responsiveHeight(218);
+    final containerMinHeight = type == ProcessContainerType.doctor
+        ? SizeConfig.responsiveHeight(300)
+        : SizeConfig.responsiveHeight(200);
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: SizeConfig.responsiveWidth(348),
-        height: containerHeight,
+        constraints: BoxConstraints(
+          minHeight: containerMinHeight,
+        ),
         decoration: BoxDecoration(
           color: AppColors.lightgray,
           borderRadius: BorderRadius.circular(20),
@@ -79,7 +81,7 @@ class PatientProcessContainer extends StatelessWidget {
                   (index) => Padding(
                     padding: EdgeInsets.only(
                       right: index < 4 && index < imageUrls.length - 1
-                          ? SizeConfig.responsiveWidth(2)
+                          ? SizeConfig.responsiveWidth(4)
                           : 0,
                     ),
                     child: GestureDetector(
@@ -159,6 +161,7 @@ class PatientProcessContainer extends StatelessWidget {
               ],
             ],
           ],
+        
         ),
       ),
     );

@@ -18,7 +18,7 @@ class ImageContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dimension = size == ImageContainerSize.big
-        ? SizeConfig.responsiveWidth(106)
+        ? SizeConfig.responsiveWidth(100)
         : SizeConfig.responsiveWidth(60);
 
     return GestureDetector(

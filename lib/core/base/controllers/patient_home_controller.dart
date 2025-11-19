@@ -44,6 +44,10 @@ class PatientHomeController extends GetxController {
     _updatesSubscription = _db.getPatientUpdates(patientUid).listen((data) {
       _patientUpdates.value = data;
       _isLoadingUpdates.value = false;
+  
+      print(patientUid);
+    
+
     }, onError: (e) {
       print("Error in updates stream: $e");
       _isLoadingUpdates.value = false;

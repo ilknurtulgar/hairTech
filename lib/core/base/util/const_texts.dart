@@ -68,7 +68,7 @@ class ConstTexts {
   static const String reviewAnswersButtonText = 'Yanıtları İncele';
 
   static const String welcomeBack = "Hoş geldin,";
-  static const String nextPhotoUpload = "Sıradaki fotoğraf yükleme tarihin:";
+  static const String nextPhotoUpload = "Fotoğraf yükleme tarihin:";
   static const String callDoctor = "Doktorunu aramak için tıkla.";
   static const String activeAppointment = "Aktif Randevu";
   static const String lastReviewsFromDoctor = "Doktorundan Son Geribildirimler";

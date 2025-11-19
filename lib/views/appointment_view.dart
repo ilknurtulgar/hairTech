@@ -125,8 +125,7 @@ class _AppointmentViewState extends State<AppointmentView> {
                               } else {
                                 selectedDoctor = doctor;
                                 selectedDateIndex = null;
-                                // Ayrıca ekrana da göster
-                                Get.snackbar('Seçilen Doktor', 'uid: ${doctor.uid}');
+                              
                               }
                             });
                           }
