@@ -28,7 +28,9 @@ class CustomIconButton extends StatelessWidget {
         height: SizeConfig.responsiveHeight(size),
         decoration: BoxDecoration(
           color: backgroundColor,
-          borderRadius: BorderRadius.circular(isCircle ? size / 2 : 20),
+          borderRadius: BorderRadius.circular(
+            isCircle ? size / 2 : SizeConfig.responsiveWidth(20),
+          ),
         ),
         child: Icon(
           icon,

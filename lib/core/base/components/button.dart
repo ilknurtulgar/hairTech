@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../util/app_colors.dart';
 import '../util/text_utility.dart';
+import '../util/size_config.dart';
 
 class Button extends StatelessWidget {
   final String text;
@@ -26,32 +27,35 @@ class Button extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig.init(context);
+    final double effectiveHeight = buttonHeight == 56 ? SizeConfig.responsiveHeight(56) : buttonHeight;
     if (isOutline) {
       return TextButton(
-        // 3. DISABLE onPressed IF LOADING
         onPressed: isLoading ? null : onTap,
         style: TextButton.styleFrom(
           foregroundColor: textColor,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: EdgeInsets.symmetric(vertical: SizeConfig.responsiveHeight(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(SizeConfig.responsiveWidth(40)),
+          ),
         ),
-        child: _buildChild(), // <-- 4. MOVED CHILD TO A HELPER
+        child: _buildChild(),
       );
     }
 
     return SizedBox(
       width: buttonWidth,
-      height: buttonHeight,
+      height: effectiveHeight,
       child: ElevatedButton(
-        // 3. DISABLE onPressed IF LOADING
         onPressed: isLoading ? null : onTap,
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(40),
+            borderRadius: BorderRadius.circular(SizeConfig.responsiveWidth(40)),
           ),
           elevation: 0,
         ),
-        child: _buildChild(), // <-- 4. MOVED CHILD TO A HELPER
+        child: _buildChild(),
       ),
     );
   }
@@ -60,8 +64,8 @@ class Button extends StatelessWidget {
   Widget _buildChild() {
     if (isLoading) {
       return SizedBox(
-        width: 24, // Standard spinner size
-        height: 24,
+        width: SizeConfig.responsiveWidth(24),
+        height: SizeConfig.responsiveWidth(24),
         child: CircularProgressIndicator(
           color: textColor,
           strokeWidth: 2.5,
@@ -73,7 +77,7 @@ class Button extends StatelessWidget {
         style: TextUtility.getStyle(
           color: textColor,
           fontWeight: FontWeight.w600,
-          fontSize: 16,
+          fontSize: SizeConfig.responsiveWidth(16),
         ),
       );
     }

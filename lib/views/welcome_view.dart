@@ -54,61 +54,63 @@ class _WelcomeViewState extends State<WelcomeView> {
 
     return Scaffold(
       backgroundColor: AppColors.white,
-      body: Column(
-        children: [
-          Image.asset(
-            ImageUtility.welcomeImg,
-            fit: BoxFit.cover,
-            width: double.infinity,
-          ),
-          Expanded(
-            child: PageView.builder(
-              controller: _pageController,
-              itemCount: slideData.length + 1,
-              onPageChanged: (index) {
-                if (index == slideData.length) {
-                  _goToGetStarted();
-                } else {
-                  setState(() {
-                    _currentPage = index;
-                  });
+      body: SafeArea(
+        child: Column(
+          children: [
+            Image.asset(
+              ImageUtility.welcomeImg,
+              fit: BoxFit.cover,
+              width: double.infinity,
+            ),
+            Expanded(
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: slideData.length + 1,
+                onPageChanged: (index) {
+                  if (index == slideData.length) {
+                    _goToGetStarted();
+                  } else {
+                    setState(() {
+                      _currentPage = index;
+                    });
+                  }
+                },
+                itemBuilder: (context, index) {
+                  if (index == slideData.length) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  final slide = slideData[index];
+                  return _SlideContent(
+                    header: slide['header']!,
+                    description: slide['description']!,
+                  );
+                },
+              ),
+            ),
+            _BottomNavBar(
+              currentPage: _currentPage,
+              pageCount: slideData.length,
+              onLeftTap: () {
+                if (_currentPage > 0) {
+                  _pageController.previousPage(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeOut,
+                  );
                 }
               },
-              itemBuilder: (context, index) {
-                if (index == slideData.length) {
-                  return const Center(child: CircularProgressIndicator());
+              onRightTap: () {
+                if (_currentPage < slideData.length - 1) {
+                  _pageController.nextPage(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeOut,
+                  );
+                } else {
+                  _goToGetStarted();
                 }
-                final slide = slideData[index];
-                return _SlideContent(
-                  header: slide['header']!,
-                  description: slide['description']!,
-                );
               },
             ),
-          ),
-          _BottomNavBar(
-            currentPage: _currentPage,
-            pageCount: slideData.length,
-            onLeftTap: () {
-              if (_currentPage > 0) {
-                _pageController.previousPage(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeOut,
-                );
-              }
-            },
-            onRightTap: () {
-              if (_currentPage < slideData.length - 1) {
-                _pageController.nextPage(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeOut,
-                );
-              } else {
-                _goToGetStarted();
-              }
-            },
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -124,7 +126,7 @@ class _SlideContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(32.0),
+      padding: EdgeInsets.all(SizeConfig.responsiveWidth(32)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,11 +135,11 @@ class _SlideContent extends StatelessWidget {
             header,
             style: TextUtility.headerStyle,
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: SizeConfig.responsiveHeight(16)),
           Text(
             description,
             style: TextUtility.getStyle(
-              fontSize: 16.0,
+              fontSize: SizeConfig.responsiveWidth(16),
               color: AppColors.dark.withOpacity(0.7),
             ),
           ),
@@ -166,7 +168,7 @@ class _BottomNavBar extends StatelessWidget {
     final bool isLastPage = currentPage == pageCount - 1;
 
     return Container(
-      height: 70 + MediaQuery.of(context).padding.bottom,
+      height: SizeConfig.responsiveHeight(70) + MediaQuery.of(context).padding.bottom,
       decoration: const BoxDecoration(
         color: AppColors.darker,
         borderRadius: BorderRadius.only(
@@ -175,7 +177,7 @@ class _BottomNavBar extends StatelessWidget {
         ),
       ),
       padding: EdgeInsets.fromLTRB(
-          24, 0, 24, MediaQuery.of(context).padding.bottom),
+          SizeConfig.responsiveWidth(24), 0, SizeConfig.responsiveWidth(24), MediaQuery.of(context).padding.bottom),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -217,9 +219,9 @@ class _PageIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      margin: const EdgeInsets.symmetric(horizontal: 4),
-      height: 10,
-      width: isActive ? 24 : 10,
+      margin: EdgeInsets.symmetric(horizontal: SizeConfig.responsiveWidth(4)),
+      height: SizeConfig.responsiveHeight(10),
+      width: isActive ? SizeConfig.responsiveWidth(24) : SizeConfig.responsiveWidth(10),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: isActive ? AppColors.lighter : AppColors.light,

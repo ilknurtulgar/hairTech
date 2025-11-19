@@ -9,6 +9,7 @@ import '../core/base/util/img_utility.dart';
 //import 'patient_signup_view.dart';
 import '../core/base/service/auth_service.dart'; // <-- 2. Import AuthService
 import '../core/base/service/database_service.dart';
+import '../core/base/util/size_config.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // <-- 2. Import User
 
 // 3. Change StatefulWidget to StatelessWidget
@@ -96,27 +97,32 @@ class PatientLoginView extends StatelessWidget {
           onPressed: () => Get.back(), // <-- 7. Use Get.back()
         ),
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                ImageUtility.logo,
-                height: 80,
-              ),
-              const SizedBox(height: 32),
-              // 8. Wrap LoginContainer in Obx
-              Obx(() => LoginContainer(
-                    headerText: ConstTexts.patientLoginHeader,
-                    emailController: emailController,
-                    passwordController: passwordController,
-                    isLoading: isLoading.value,
-                    errorMessage: errorMessage.value,
-                    onLoginTap: handleLogin,
-                  )),
-            ],
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: SizeConfig.responsiveWidth(32),
+              vertical: SizeConfig.responsiveHeight(24),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  ImageUtility.logo,
+                  height: SizeConfig.responsiveHeight(80),
+                ),
+                SizedBox(height: SizeConfig.responsiveHeight(32)),
+                // 8. Wrap LoginContainer in Obx
+                Obx(() => LoginContainer(
+                      headerText: ConstTexts.patientLoginHeader,
+                      emailController: emailController,
+                      passwordController: passwordController,
+                      isLoading: isLoading.value,
+                      errorMessage: errorMessage.value,
+                      onLoginTap: handleLogin,
+                    )),
+              ],
+            ),
           ),
         ),
       ),

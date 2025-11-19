@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/base/util/size_config.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../core/base/components/button.dart';
@@ -15,6 +16,7 @@ class PatientSignUpView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig.init(context);
     final AuthService authService = Get.find<AuthService>();
     final nameController = TextEditingController();
     final surnameController = TextEditingController();
@@ -78,71 +80,76 @@ class PatientSignUpView extends StatelessWidget {
           onPressed: () => Get.back(),
         ),
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                ConstTexts.patientSignUpHeader,
-                style: TextUtility.headerStyle,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              InputBox(
-                controller: nameController,
-                placeholderText: ConstTexts.nameHint,
-              ),
-              const SizedBox(height: 16),
-              InputBox(
-                controller: surnameController,
-                placeholderText: ConstTexts.surnameHint,
-              ),
-              const SizedBox(height: 16),
-              InputBox(
-                controller: ageController,
-                placeholderText: ConstTexts.ageHint,
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 16),
-              InputBox(
-                controller: emailController,
-                placeholderText: ConstTexts.emailHint,
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: 16),
-              InputBox(
-                controller: passwordController,
-                placeholderText: ConstTexts.passwordHint,
-                obscureText: true,
-              ),
-              const SizedBox(height: 24),
-              Obx(() => Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      if (errorMessage.value != null)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0),
-                          child: Text(
-                            errorMessage.value!,
-                            style: TextUtility.getStyle(
-                                color: AppColors.secondary,
-                                fontWeight: FontWeight.w600),
-                            textAlign: TextAlign.center,
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: SizeConfig.responsiveWidth(32),
+              vertical: SizeConfig.responsiveHeight(24),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  ConstTexts.patientSignUpHeader,
+                  style: TextUtility.headerStyle,
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: SizeConfig.responsiveHeight(24)),
+                InputBox(
+                  controller: nameController,
+                  placeholderText: ConstTexts.nameHint,
+                ),
+                SizedBox(height: SizeConfig.responsiveHeight(16)),
+                InputBox(
+                  controller: surnameController,
+                  placeholderText: ConstTexts.surnameHint,
+                ),
+                SizedBox(height: SizeConfig.responsiveHeight(16)),
+                InputBox(
+                  controller: ageController,
+                  placeholderText: ConstTexts.ageHint,
+                  keyboardType: TextInputType.number,
+                ),
+                SizedBox(height: SizeConfig.responsiveHeight(16)),
+                InputBox(
+                  controller: emailController,
+                  placeholderText: ConstTexts.emailHint,
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                SizedBox(height: SizeConfig.responsiveHeight(16)),
+                InputBox(
+                  controller: passwordController,
+                  placeholderText: ConstTexts.passwordHint,
+                  obscureText: true,
+                ),
+                SizedBox(height: SizeConfig.responsiveHeight(24)),
+                Obx(() => Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (errorMessage.value != null)
+                          Padding(
+                            padding: EdgeInsets.only(bottom: SizeConfig.responsiveHeight(16)),
+                            child: Text(
+                              errorMessage.value!,
+                              style: TextUtility.getStyle(
+                                  color: AppColors.secondary,
+                                  fontWeight: FontWeight.w600),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
+                        Button(
+                          text: ConstTexts.signUpButton,
+                          onTap: handleSignUp,
+                          isLoading: isLoading.value,
+                          backgroundColor: AppColors.green,
+                          textColor: AppColors.white,
                         ),
-                      Button(
-                        text: ConstTexts.signUpButton,
-                        onTap: handleSignUp,
-                        isLoading: isLoading.value,
-                        backgroundColor: AppColors.green,
-                        textColor: AppColors.white,
-                      ),
-                    ],
-                  )),
-            ],
+                      ],
+                    )),
+              ],
+            ),
           ),
         ),
       ),

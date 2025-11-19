@@ -57,7 +57,7 @@ class _GraphicContainerState extends State<GraphicContainer> {
           padding: EdgeInsets.all(SizeConfig.responsiveWidth(15)),
           decoration: BoxDecoration(
             color: AppColors.white,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(SizeConfig.responsiveWidth(20)),
           ),
           child: LineChart(
             LineChartData(
@@ -158,7 +158,7 @@ class _GraphicContainerState extends State<GraphicContainer> {
                 height: SizeConfig.responsiveHeight(30),
                 decoration: BoxDecoration(
                   color: isSelected ? AppColors.secondary : AppColors.darkgray,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(SizeConfig.responsiveWidth(20)),
                 ),
                 alignment: Alignment.center,
                 child: Text(
