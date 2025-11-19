@@ -15,22 +15,20 @@ class PatientProcessView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Ensure SizeConfig is initialized if it's not done globally
     SizeConfig.init(context); 
     final homeProvider = Get.find<PatientHomeController>();
-    // Turkish localization required by the format 'EEEE'
     final DateFormat formatter = DateFormat('dd/MM/yyyy - EEEE', 'tr_TR');
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      // 1. Removed AppBar
-      body: SafeArea( // 2. Used SafeArea
-        child: Padding( // 3. Used Padding
+
+      body: SafeArea( 
+        child: Padding( 
           padding: ResponsePadding.page(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ⭐️ Title moved inside the body content ⭐️
+             
               Text(
                 ConstTexts.progressTabLabel,
                 style: TextUtility.getStyle(
@@ -75,25 +73,20 @@ class PatientProcessView extends StatelessWidget {
       itemCount: updates.length,
       itemBuilder: (context, index) {
         final update = updates[index];
-        
-        // Ensure scores have 5 elements before accessing indices
         final safeScores = update.scores.length >= 5 ? update.scores : List.filled(5, 0);
 
         return Padding(
-          padding: const EdgeInsets.only(bottom: 16.0),
+          padding: const EdgeInsets.only(bottom: 10),
           child: PatientProcessContainer(
             date: formatter.format(update.date.toDate()),
             imageUrls: update.imageURLs.cast<String?>(), // Cast to List<String?>
             subtitle: ConstTexts.patientNoteTitle,
             description: update.patientNote,
-            // The type is 'doctor' so that all fields (evaluation/feedback) are displayed.
             type: ProcessContainerType.doctor, 
 
-            // Doctor fields
             doctorFeedbackTitle: ConstTexts.doctorNoteTitle,
             doctorFeedback: update.doctorNote,
 
-            // Scores (convert List<int> to String)
             growthValue: safeScores[0].toString(),
             densityValue: safeScores[1].toString(),
             naturalnessValue: safeScores[2].toString(),

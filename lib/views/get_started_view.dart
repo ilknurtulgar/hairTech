@@ -33,7 +33,7 @@ class GetStartedView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Image.asset(
-                ImageUtility.logo,
+                ImageUtility.logoDark,
                 height: 80,
               ),
               const SizedBox(height: 48),
@@ -56,7 +56,7 @@ class GetStartedView extends StatelessWidget {
               Button(
                 text: ConstTexts.registeredPatientLoginButtonText,
                 onTap: () {
-                  Get.to(() => const PatientLoginView());
+                  Get.to(() => PatientLoginView());
                 },
                 backgroundColor: AppColors.primary,
                 textColor: AppColors.white,

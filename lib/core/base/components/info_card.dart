@@ -46,9 +46,9 @@ class InfoCard extends StatelessWidget {
               Icon(
                 icon,
                 color: AppColors.darker,
-                size: SizeConfig.responsiveWidth(20),
+                size: SizeConfig.responsiveWidth(15),
               ),
-              SizedBox(width: SizeConfig.responsiveWidth(8)),
+              SizedBox(width: SizeConfig.responsiveWidth(4)),
               Expanded(
                 child: Text(
                   text,

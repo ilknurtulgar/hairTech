@@ -10,15 +10,14 @@ import 'package:hairtech/core/base/service/storage_service.dart';
 class AppBindings extends Bindings {
   @override
   void dependencies() {
-    // Services (live forever)
     Get.put(AuthService(), permanent: true);
     Get.put(DatabaseService(), permanent: true);
     Get.put(StorageService(), permanent: true);
 
-    // Controllers (live forever, managed by GetX)
     Get.put(AuthController(), permanent: true);
     Get.put(UserController(), permanent: true);
-    Get.put(PatientHomeController(), permanent: true);
-    Get.put(DoctorHomeController(), permanent: true);
+
+    Get.lazyPut(() => PatientHomeController());
+    Get.lazyPut(() => DoctorHomeController());
   }
 }

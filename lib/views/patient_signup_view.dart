@@ -55,7 +55,6 @@ class PatientSignUpView extends StatelessWidget {
       );
 
       if (result is User) {
-        // Success! AuthController will handle the redirect.
         print("Signup Success! User ID: ${result.uid}");
         isLoading.value = false;
         Get.offAll(() => AppointmentView(
