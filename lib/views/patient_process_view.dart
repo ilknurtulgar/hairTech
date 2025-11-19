@@ -6,6 +6,7 @@ import 'package:hairtech/core/base/util/app_colors.dart';
 import 'package:hairtech/core/base/util/const_texts.dart';
 import 'package:hairtech/core/base/util/padding_util.dart';
 import 'package:hairtech/core/base/util/text_utility.dart';
+import 'package:hairtech/core/base/util/size_config.dart';
 import 'package:hairtech/model/patient_update_model.dart';
 import 'package:intl/intl.dart';
 
@@ -14,30 +15,44 @@ class PatientProcessView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Ensure SizeConfig is initialized if it's not done globally
+    SizeConfig.init(context); 
     final homeProvider = Get.find<PatientHomeController>();
+    // Turkish localization required by the format 'EEEE'
     final DateFormat formatter = DateFormat('dd/MM/yyyy - EEEE', 'tr_TR');
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: AppColors.background,
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        title: Text(
-          ConstTexts.processHeader, // "Sürecim"
-          style: TextUtility.getStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
+      // 1. Removed AppBar
+      body: SafeArea( // 2. Used SafeArea
+        child: Padding( // 3. Used Padding
+          padding: ResponsePadding.page(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ⭐️ Title moved inside the body content ⭐️
+              Text(
+                ConstTexts.progressTabLabel,
+                style: TextUtility.getStyle(
+                  fontSize: SizeConfig.responsiveWidth(36),
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              SizedBox(height: SizeConfig.responsiveHeight(16)),
+
+              // 4. Used Expanded to contain the ListView.builder
+              Expanded(
+                child: Obx(() => _buildContent(
+                    context, homeProvider.isLoadingUpdates, homeProvider.patientUpdates, formatter)),
+              ),
+            ],
           ),
         ),
       ),
-      body: Obx(() => _buildBody(
-          context, homeProvider.isLoadingUpdates, homeProvider.patientUpdates, formatter)),
     );
   }
 
-  Widget _buildBody(BuildContext context, bool isLoading,
+  Widget _buildContent(BuildContext context, bool isLoading,
       List<PatientUpdateModel> updates, DateFormat formatter) {
     if (isLoading) {
       return const Center(
@@ -53,30 +68,37 @@ class PatientProcessView extends StatelessWidget {
       );
     }
 
+    // Since Padding is already applied to the Column's body, we remove redundant padding here.
     return ListView.builder(
-      padding: ResponsePadding.page(),
+      // Ensure padding is set to zero as the parent Column already handles it.
+      padding: EdgeInsets.zero, 
       itemCount: updates.length,
       itemBuilder: (context, index) {
         final update = updates[index];
+        
+        // Ensure scores have 5 elements before accessing indices
+        final safeScores = update.scores.length >= 5 ? update.scores : List.filled(5, 0);
+
         return Padding(
           padding: const EdgeInsets.only(bottom: 16.0),
           child: PatientProcessContainer(
             date: formatter.format(update.date.toDate()),
-            imageUrls: update.imageURLs,
+            imageUrls: update.imageURLs.cast<String?>(), // Cast to List<String?>
             subtitle: ConstTexts.patientNoteTitle,
             description: update.patientNote,
-            type: ProcessContainerType.doctor, // Show all fields
+            // The type is 'doctor' so that all fields (evaluation/feedback) are displayed.
+            type: ProcessContainerType.doctor, 
 
             // Doctor fields
             doctorFeedbackTitle: ConstTexts.doctorNoteTitle,
             doctorFeedback: update.doctorNote,
 
             // Scores (convert List<int> to String)
-            growthValue: update.scores[0].toString(),
-            densityValue: update.scores[1].toString(),
-            naturalnessValue: update.scores[2].toString(),
-            healthValue: update.scores[3].toString(),
-            overallValue: update.scores[4].toString(),
+            growthValue: safeScores[0].toString(),
+            densityValue: safeScores[1].toString(),
+            naturalnessValue: safeScores[2].toString(),
+            healthValue: safeScores[3].toString(),
+            overallValue: safeScores[4].toString(),
           ),
         );
       },

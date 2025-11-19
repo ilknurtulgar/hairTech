@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart'; // kIsWeb
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:hairtech/core/base/components/button.dart';
 import 'package:hairtech/core/base/controllers/user_controller.dart';

@@ -1,4 +1,4 @@
-// ignore_for_file: unused_field
+// ignore_for_file: unused_field, avoid_print
 
 import 'dart:async';
 import 'dart:io';
@@ -22,21 +22,11 @@ import '../../../product/service/sensor_service.dart';
 import '../../../product/service/tts_service.dart';
 
 class CameraViewModel extends GetxController {
-  int frameCount = 0;
-  bool isProcessing = false;
-  bool isStreaming = false;
-
-  RxBool isSpeakingInStream = RxBool(false);
-  RxBool isTakingPicture = RxBool(false);
-  // Timer
-  Timer? timer = Timer(Duration.zero, () {});
-
   // Service
   late SensorService sensorService;
   late DistanceService distanceService;
   late SpeechService speechService;
   late CommandService commandService;
-
   late PoseDetectorService poseDetectorService;
 
   // Camera
@@ -55,6 +45,18 @@ class CameraViewModel extends GetxController {
   // Pose detector
   late PoseDetector poseDetector;
 
+  // Processing variables
+  int frameCount = 0;
+  bool isProcessing = false;
+  bool isStreaming = false;
+  bool isTryingAgain = false;
+
+  RxBool isSpeakingInStream = RxBool(false);
+  RxBool isTakingPicture = RxBool(false);
+
+  // Timer
+  Timer timer = Timer(Duration.zero, () {});
+
   // Pose
   int poseIndex = 0;
   final Rx<HeadPose> _currentPose = (HeadPose.front).obs;
@@ -65,28 +67,29 @@ class CameraViewModel extends GetxController {
   Rx<HeadPose> get currentPose => _currentPose;
 
   // Photos
-  final RxList<Rx<Uint8List?>> _imageList = RxList.generate(
+  RxList<Rx<Uint8List?>> _imageList = RxList.generate(
     HeadPose.values.length,
     (_) => Rx<Uint8List?>(null),
   );
-  List<Rx<Uint8List?>> get imageList => _imageList;
   List<bool> isTaken = List.filled(HeadPose.values.length, false);
+
+  List<Rx<Uint8List?>> get imageList => _imageList;
 
   // Face angle values
   Rx<double?> rotX = (0.0).obs;
   Rx<double?> rotY = (0.0).obs;
   Rx<double?> rotZ = (0.0).obs;
-  Rx<Rect?> boundingBox = Rect.fromLTRB(0, 0, 0, 0).obs;
+  Rx<Rect?> boundingBox = (Rect.fromLTRB(0, 0, 0, 0)).obs;
 
   RxDouble ratio = 0.0.obs; // Yüz - ekran oranı
+  Rx<bool> isInFrame = false.obs;
 
   List<Rx<double?>> get faceAngles => [rotX, rotY, rotZ];
-
-  Rx<bool> isInFrame = false.obs;
 
   // Phone slope values
   RxDouble pitch = (0.0).obs; // Telefon eğimi
   RxDouble roll = (0.0).obs; // Telefon sol sağ eğim
+
   List<Rx<double?>> get currentPhoneAngles => [roll, pitch];
 
   // Phone distance
@@ -94,14 +97,18 @@ class CameraViewModel extends GetxController {
   Rx<double> get distance => _distance;
 
   // Omuz
-  Rx<String> shoulder = "".obs;
   List<Rx<double?>> _shoulderCoordinates = [];
+  final RxDouble _shoulderDistance = (0.0).obs;
   List<Rx<double?>> get shoulderCoordinates => _shoulderCoordinates;
+  RxDouble get shoulderDistance => _shoulderDistance;
+
+  // Screen size
   Size _screenSize = Size.zero;
   Size get screenSize => _screenSize;
 
   @override
   void onInit() {
+    // Face detector
     options = FaceDetectorOptions(
       enableContours: false,
       enableClassification: false,
@@ -111,7 +118,7 @@ class CameraViewModel extends GetxController {
     );
     faceDetector = FaceDetector(options: options);
 
-    // PoseDetector'ı başlatın (bunu bir kere yapın)
+    // PoseDetector
     final PoseDetector poseDetector = PoseDetector(
       options: PoseDetectorOptions(
         model: PoseDetectionModel.base, // 'base' modeli hızlıdır
@@ -119,6 +126,7 @@ class CameraViewModel extends GetxController {
       ),
     );
 
+    // Service
     sensorService = SensorService();
     distanceService = DistanceService();
     speechService = SpeechService();
@@ -144,13 +152,8 @@ class CameraViewModel extends GetxController {
       currentFaceAngles: faceAngles,
       currentShoulderCoordinates: shoulderCoordinates,
       screenSize: screenSize,
+      currentShoulderDistance: shoulderDistance,
     );
-
-    /*
-    timer = Timer.periodic(Duration(seconds: 5), (timer) {
-      _checkCommandAfterTTS();
-    });
-    */
 
     super.onInit();
   }
@@ -163,34 +166,54 @@ class CameraViewModel extends GetxController {
     }
     _cameraController.dispose();
     faceDetector.close();
+    // pose detector close
+    // sensor close
     speechService.disposeService();
     super.dispose();
   }
 
+  void tryAgain() {
+    // Pose
+    poseIndex = 0;
+    currentPose.value = HeadPose.front;
+    command.value = "Başlangıç komutu";
+    lastCommand = "";
+
+    // Photos
+    _imageList = RxList.generate(
+      HeadPose.values.length,
+      (_) => Rx<Uint8List?>(null),
+    );
+    isTaken = List.filled(HeadPose.values.length, false);
+
+    if (timer.isActive) timer.cancel();
+
+    startCountdown();
+  }
+
   Future<void> startCountdown() async {
     // İlk mesaj
-    await speechService.speak(
-      "Fotoğraf çekimi 3 saniye içinde başlayacak. İlk çekim ön yüz çekimi!",
-    );
+    await speechService.speak(CommandMessage.startingCountDown);
 
     // Geri sayım
     for (int i = 3; i >= 1; i--) {
       await speechService.speak("$i");
       await Future.delayed(
-        Duration(seconds: 1),
-      ); // opsiyonel, TTS ile birlikte çalışabilir
+        const Duration(seconds: 1),
+      );
     }
+
+    // ilk komut anlık
+    checkCommandAfterTTS();
 
     // Timer'ı başlat
     timer = Timer.periodic(
-      Duration(seconds: 5),
+      const Duration(seconds: 3),
       (timer) => checkCommandAfterTTS(),
     );
   }
 
   void checkCommandAfterTTS() {
-    // güncel
-    // updateCommandService();
     command.value = commandService.getCommand();
 
     if (command.value != CommandMessage.empty &&
@@ -199,9 +222,44 @@ class CameraViewModel extends GetxController {
       lastCommand = command.value;
 
       if (!speechService.isPlaying.value) {
-        speechService.speak(command.value);
+        if (poseIndex < HeadPose.values.length) {
+          speechService.speak(command.value);
+        }
       }
     }
+  }
+
+  void cleanParameters() {
+    // Pose
+    poseIndex = 0;
+    currentPose.value = HeadPose.front;
+    command.value = "Başlangıç komutu";
+    lastCommand = "";
+
+    // Photos
+    _imageList = RxList.generate(
+      HeadPose.values.length,
+      (_) => Rx<Uint8List?>(null),
+    );
+    isTaken = List.filled(HeadPose.values.length, false);
+
+    // Face angle values
+    rotX = (0.0).obs;
+    rotY = (0.0).obs;
+    rotZ = (0.0).obs;
+    boundingBox = (const Rect.fromLTRB(0, 0, 0, 0)).obs;
+
+    ratio = (0.0).obs;
+    isInFrame.value = false;
+
+    // Phone slope values
+    pitch.value = 0.0;
+    roll.value = 0.0;
+
+    // Phone distance
+    distance.value = 0.0;
+
+    _shoulderCoordinates = [];
   }
 
   void updateCommandService() {
@@ -210,6 +268,7 @@ class CameraViewModel extends GetxController {
     commandService.currentFaceAngles = faceAngles;
     commandService.currentShoulderCoordinates = shoulderCoordinates;
     commandService.screenSize = screenSize;
+    commandService.currentShoulderDistance = shoulderDistance;
     commandService.currentHeadPose = currentPose;
   }
 
@@ -217,9 +276,8 @@ class CameraViewModel extends GetxController {
     _cameraController = CameraController(
       camera,
       ResolutionPreset.medium,
-      imageFormatGroup: Platform.isIOS
-          ? ImageFormatGroup.bgra8888
-          : ImageFormatGroup.nv21,
+      imageFormatGroup:
+          Platform.isIOS ? ImageFormatGroup.bgra8888 : ImageFormatGroup.nv21,
     );
 
     // If the controller is updated then update the UI.
@@ -231,44 +289,37 @@ class CameraViewModel extends GetxController {
       }
     });
 
-    await _cameraController
-        .initialize()
-        .then((_) {
-          _isInitialized.value = true;
-          _screenSize = cameraController.value.previewSize ?? Size.zero;
-          print(
-            "SCREEN SİZEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
-          );
-          print(screenSize);
-        })
-        .catchError((Object e) {
-          if (e is CameraException) {
-            switch (e.code) {
-              case 'CameraAccessDenied':
-                ShowMessages.showInSnackBar('You have denied camera access.');
-              case 'CameraAccessDeniedWithoutPrompt':
-                // iOS only
-                ShowMessages.showInSnackBar(
-                  'Please go to Settings app to enable camera access.',
-                );
-              case 'CameraAccessRestricted':
-                // iOS only
-                ShowMessages.showInSnackBar('Camera access is restricted.');
-              case 'AudioAccessDenied':
-                ShowMessages.showInSnackBar('You have denied audio access.');
-              case 'AudioAccessDeniedWithoutPrompt':
-                // iOS only
-                ShowMessages.showInSnackBar(
-                  'Please go to Settings app to enable audio access.',
-                );
-              case 'AudioAccessRestricted':
-                // iOS only
-                ShowMessages.showInSnackBar('Audio access is restricted.');
-              default:
-                _showCameraException(e);
-            }
-          }
-        });
+    await _cameraController.initialize().then((_) {
+      _isInitialized.value = true;
+      _screenSize = cameraController.value.previewSize ?? Size.zero;
+    }).catchError((Object e) {
+      if (e is CameraException) {
+        switch (e.code) {
+          case 'CameraAccessDenied':
+            ShowMessages.showInSnackBar('You have denied camera access.');
+          case 'CameraAccessDeniedWithoutPrompt':
+            // iOS only
+            ShowMessages.showInSnackBar(
+              'Please go to Settings app to enable camera access.',
+            );
+          case 'CameraAccessRestricted':
+            // iOS only
+            ShowMessages.showInSnackBar('Camera access is restricted.');
+          case 'AudioAccessDenied':
+            ShowMessages.showInSnackBar('You have denied audio access.');
+          case 'AudioAccessDeniedWithoutPrompt':
+            // iOS only
+            ShowMessages.showInSnackBar(
+              'Please go to Settings app to enable audio access.',
+            );
+          case 'AudioAccessRestricted':
+            // iOS only
+            ShowMessages.showInSnackBar('Audio access is restricted.');
+          default:
+            _showCameraException(e);
+        }
+      }
+    });
   }
 
   Future<void> streamImage(CameraDescription camera, CameraImage image) async {
@@ -281,19 +332,19 @@ class CameraViewModel extends GetxController {
       if (inputImage != null) {
         try {
           await _processImage(inputImage);
-          // await scaleShoulderPosition(inputImage);
           // Omuz koordinatlarını al
-          List<double> coordinates = await poseDetectorService
-              .getShoulderCoordinates(inputImage);
-          _shoulderCoordinates = coordinates
-              .map((coord) => Rx<double?>(coord))
-              .toList();
+          List<double> coordinates =
+              await poseDetectorService.getShoulderCoordinates(inputImage);
+          _shoulderCoordinates =
+              coordinates.map((coord) => Rx<double?>(coord)).toList();
+          _shoulderDistance.value =
+              await poseDetectorService.getShoulderDistance(inputImage);
+
           // CommandService verilerini önce güncelle
           updateCommandService();
           if (command.value ==
-                  CommandMessage
-                      .empty //commandService.isEverythingSuitable
-                      &&
+                  CommandMessage.empty
+              &&
               !isTaken[poseIndex] &&
               poseIndex < HeadPose.values.length &&
               !isTakingPicture.value) {
@@ -308,15 +359,24 @@ class CameraViewModel extends GetxController {
             poseIndex++;
             if (poseIndex < poses.length) {
               _currentPose.value = poses[poseIndex];
+              command.value =
+                  "Sonraki çekim ${currentPose.value.name}, ${currentPose.value.firstCommand}"; //currentPose.value.firstCommand;
+              await Future.delayed(const Duration(seconds: 1));
+              if (!speechService.isPlaying.value) {
+                speechService.speak(command.value);
+              }
+            } else {
+              await Future.delayed(const Duration(seconds: 1));
+              if (!speechService.isPlaying.value) {
+                speechService.speak(CommandMessage.photoEnd);
+              }
+              if (timer.isActive) {
+                timer.cancel();
+              }
             }
-            await Future.delayed(Duration(seconds: 1));
-            command.value =
-                "Sonraki çekim ${currentPose.value.name}, ${currentPose.value.firstCommand}"; //currentPose.value.firstCommand;
-            if (!speechService.isPlaying.value) {
-              speechService
-                  .speak(command.value)
-                  .then((_) => isSpeakingInStream.value = false);
-            }
+            await Future.delayed(const Duration(seconds: 3), () { //
+              isSpeakingInStream.value = false;
+            });
           }
         } catch (e) {
           print("ML processing error: $e");
@@ -354,9 +414,8 @@ class CameraViewModel extends GetxController {
       if (rotation == null) return null;
 
       // Platforma göre formatı belirle
-      final format = Platform.isIOS
-          ? InputImageFormat.bgra8888
-          : InputImageFormat.nv21;
+      final format =
+          Platform.isIOS ? InputImageFormat.bgra8888 : InputImageFormat.nv21;
 
       // Metadata oluştur
       final metadata = InputImageMetadata(
@@ -380,8 +439,9 @@ class CameraViewModel extends GetxController {
     if (faces.isNotEmpty) {
       final face = faces.first;
       boundingBox.value = face.boundingBox;
-
+      
       isInFrame.value = true;
+
       // Pitch (Sapma)
       rotX.value =
           face.headEulerAngleX; // Head is tilted up and down rotX degrees
@@ -390,15 +450,14 @@ class CameraViewModel extends GetxController {
           face.headEulerAngleY; // Head is rotated to the right rotY degrees
       // Roll (yalpalama)
       rotZ.value = face.headEulerAngleZ; // Head is tilted sideways rotZ degrees
-
+      // Yüz - ekran oranı
       ratio.value = distanceService.calculateRatio(
         face,
         inputImage.metadata!.size.width,
       );
+      // Yüzün ekrandan uzaklığı cm cinsinden
       _distance.value = distanceService.calculateDistanceCm(ratio.value);
-    } /*  else {
-      isInFrame.value = false;
-    } */
+    }
   }
 
   Future<void> capture() async {
@@ -445,7 +504,6 @@ class CameraViewModel extends GetxController {
           'height': image.height,
           'sensorOrientation': sensorOrientation,
         };
-        // final Map<String, dynamic> params = ImageConverter.prepareNV21Params(image, sensorOrientation);
         jpeg = await compute(ImageConverter.convertNV21ToJpegIsolate, params);
       } else {
         print("Desteklenmeyen image format: ${image.format.group}");
@@ -464,7 +522,6 @@ class CameraViewModel extends GetxController {
           }
         }
 
-        //_imageList.add(jpeg);
         _imageList[poseIndex].value = jpeg;
         _imageList.refresh();
         print("Fotoğraf çekildi, toplam: ${_imageList.length}");
@@ -483,6 +540,7 @@ class CameraViewModel extends GetxController {
     return Offset(x * scaleX, y * scaleY);
   }
   */
+
   Offset scalePosition(
     double x,
     double y,

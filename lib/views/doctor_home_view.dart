@@ -184,8 +184,6 @@ class _DoctorHomeViewState extends State<DoctorHomeView> {
               ),
               
               SizedBox(height: SizeConfig.responsiveHeight(16)),
-              
-              // Pending Updates List (From Firebase)
               // Pending Updates List (From Firebase)
               Obx(() {
                 if (doctorHomeController.isLoadingUpdates.value) {
@@ -222,8 +220,7 @@ class _DoctorHomeViewState extends State<DoctorHomeView> {
                               description: update.patientNote,
                               type: ProcessContainerType.patient,
                               onTap: () {
-                  
-                                print("Give feedback for update");
+                                doctorHomeController.navigateToReviewSubmit(update);
                               },
                             ),
                             if (update.doctorNote != "" && update.doctorNote != "Doktorunuzdan geri dönüş bekleniyor.")

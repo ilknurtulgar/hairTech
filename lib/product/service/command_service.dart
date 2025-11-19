@@ -13,10 +13,7 @@ class CommandService {
   List<Rx<double?>> currentFaceAngles;
   List<Rx<double?>> currentShoulderCoordinates;
   Size screenSize;
-
-  //Rx<Size?> currentImageSize;
-  //Rx<Size?> currentPreviewSize;
-  //Rx<Rect?> currentBoundingBox;
+  RxDouble currentShoulderDistance;
 
   CommandService({
     required this.currentHeadPose,
@@ -25,16 +22,14 @@ class CommandService {
     required this.currentFaceAngles,
     required this.currentShoulderCoordinates,
     required this.screenSize,
-    //required this.currentImageSize,
-    //required this.currentPreviewSize,
-    //required this.currentBoundingBox,
+    required this.currentShoulderDistance,
   });
 
   // Command
-  // 1) Telefon eğikliği // Hallettim.
-  // 2) Telefon uzaklığı //
+  // 1) Telefon eğikliği
+  // 2) Telefon uzaklığı 
   // 3) Yüz kadrajın içinde mi?
-  // 4) Açı //
+  // 4) Açı
 
   List<bool> isAngleSuitable = List.filled(CustomAxis.values.length, false);
   List<bool> isSlopeSuitable = List.filled(PhoneSlope.values.length, false);
@@ -42,6 +37,7 @@ class CommandService {
   bool isInFrame = false;
   List<bool> isFrameSuitable = List.filled(Frame.values.length, false);
   bool isShoulderSuitable = false;
+  bool isShoulderDistOkay = false; // is shoulder distance okay
 
   bool get isHeadOverShooting =>
       currentHeadPose.value == HeadPose.top ||
@@ -58,7 +54,7 @@ class CommandService {
         case Command.angle:
           if (!isHeadOverShooting) commandMessage = faceAngleCommand();
         case Command.frame:
-          if (isHeadOverShooting) commandMessage = shoulderCheck();
+          if (isHeadOverShooting) commandMessage = shoulderPositionCommand();
       }
       if (commandMessage != CommandMessage.empty) return commandMessage;
     }
@@ -66,14 +62,14 @@ class CommandService {
   }
 
   bool get isEverythingSuitable => faceAngleCheck();
-  //honeSlopeCheck() && phoneDistanceCheck() && faceAngleCheck();
+  //phoneSlopeCheck() && phoneDistanceCheck() && faceAngleCheck();
 
   bool phoneSlopeCheck() =>
       isSlopeSuitable == List.filled(PhoneSlope.values.length, true);
 
   String phoneSlopeCommand() {
     for (var slope in PhoneSlope.values) {
-      if (/*isHeadOverShooting && */ slope == PhoneSlope.roll) continue;
+      if (slope == PhoneSlope.roll) continue; // roll çok değişken ve hassas olduğu için continue
       String command = _phoneAngleCheck(slope);
       if (command != CommandMessage.empty) return command;
     }
@@ -170,17 +166,21 @@ class CommandService {
     return command;
   }
 
-  String shoulderCheck() {
+  // Telefonu omuzlara göre konumlandırma komutları
+  String shoulderPositionCommand() {
     String command = CommandMessage.empty;
     if (currentShoulderCoordinates.isNotEmpty) {
       double? leftX = currentShoulderCoordinates[0].value;
       double? rightX = currentShoulderCoordinates[2].value;
 
       if (leftX != null && rightX != null) {
+        if (leftX > 900) return CommandMessage.phoneLeftPosition;
+        if (rightX < 0) return CommandMessage.phoneRightPosition;
         final double shoulderCenterX = (leftX + rightX) / 2;
-        final double screenCenterX = 350; //screenSize.width / 2;
-
-        final double tolerance = 25; //screenSize.width * 0.15;
+        // Uygun framelerde ortalama merkez x pozisyonu
+        final double screenCenterX = 350; // screenSize.width / 2;
+        // Uygun merkez konumu 325 - 375 arası
+        final double tolerance = 25; // screenSize.width * 0.15;
         final double positionDiff = shoulderCenterX - screenCenterX;
 
         if (positionDiff.abs() <= tolerance) {
@@ -195,12 +195,36 @@ class CommandService {
         }
       } else {
         isShoulderSuitable = false;
-        //command = CommandMessage.outsideFrame;
       }
     } else {
       isShoulderSuitable = false;
       command = CommandMessage.outsideFrame;
     }
+    return command;
+  }
+
+  String shoulderDistanceCommand() {
+    String command = CommandMessage.empty;
+    if (currentShoulderDistance.value >= 0 && currentShoulderDistance.value < 50) {
+      double tolerance = currentHeadPose.value.distanceTolerance;
+      double distanceDiff =
+          currentShoulderDistance.value - currentHeadPose.value.phoneDistance;
+      if (distanceDiff.abs() <= tolerance) {
+        isDistanceSuitable = true;
+      } else {
+        isDistanceSuitable = false;
+        if (distanceDiff > tolerance) {
+          // Telefonu yaklaştır
+          command = CommandMessage.getClose;
+        } else {
+          // Telefonu uzaklaştır
+          command = CommandMessage.stayAway;
+        }
+      }
+    } else {
+      command = CommandMessage.noShoulder;
+    }
+
     return command;
   }
 
@@ -223,7 +247,7 @@ class CommandService {
     );
   }
 
-  // Merkezde olup olmadığının kontrolü
+  // Yüzün merkezde olup olmadığının kontrolü
   String frameCommand(Rect? boundingBox, Size? imageSize, Size? previewSize) {
     String command = CommandMessage.empty;
     if (boundingBox != null && imageSize != null && previewSize != null) {
@@ -257,5 +281,3 @@ class CommandService {
 enum Command { slope, distance, frame, angle }
 
 enum Frame { left, top, bottom, right }
-
-extension FrameExtension on Frame {}

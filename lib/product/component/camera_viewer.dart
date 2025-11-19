@@ -16,7 +16,7 @@ class CustomCameraPreview extends StatelessWidget{
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color:Color(0xFF90A8C3),width: 4)
+        border: Border.all(color:const Color(0xFF90A8C3),width: 4)
       ),
       child: CameraPreview(cameraController),
     );
