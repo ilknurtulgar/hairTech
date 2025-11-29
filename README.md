@@ -34,10 +34,10 @@
 ---
 
 ### Patient Interface
-(screenshots/patient.png)
+![Patient Interface](screenshots/patient.png)
 
 ### Doctor Interface
-(screenshots/doctor.png)
+![Doctor Interface](screenshots/doctor.png)
 
 ---
 
